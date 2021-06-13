@@ -11,7 +11,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="loginBtn">登录</el-button>
+          <el-button class="loginBtn" @click="login">登录</el-button>
         </el-form-item>
       </el-form>
       <div style="display:flex;justify-content:space-between; flex-direction:row;width:100%">
@@ -48,6 +48,9 @@ export default {
     },
     toFindPassword() {
       this.$router.push("/findpassword");
+    },
+    login() {
+      this.$router.push("/home");
     },
   },
 };

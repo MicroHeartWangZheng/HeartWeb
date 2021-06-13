@@ -3,6 +3,11 @@ import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import FindPassword from '../components/FindPassword.vue'
+import Home from '../views/Home.vue'
+import Users from '../views/Users.vue'
+import Message from '../views/Message.vue'
+import Moment from '../views/Moment.vue'
+import My from '../views/My.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +27,28 @@ const router = new VueRouter({
         {
             path: '/findpassword',
             component: FindPassword
+        },
+        {
+            path: '/home',
+            component: Home,
+            redirect: '/users',
+            children: [{
+                    path: '/users',
+                    component: Users,
+                },
+                {
+                    path: '/moment',
+                    component: Moment,
+                },
+                {
+                    path: '/message',
+                    component: Message,
+                },
+                {
+                    path: '/my',
+                    component: My,
+                }
+            ]
         },
     ]
 })
