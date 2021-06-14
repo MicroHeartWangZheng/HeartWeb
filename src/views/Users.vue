@@ -235,7 +235,7 @@ export default {
   display: flex;
   justify-content: center;
   position: relative;
-   color: #999999;
+  color: #999999;
   font-size: 18px;
   margin-bottom: 20px;
   span:before,

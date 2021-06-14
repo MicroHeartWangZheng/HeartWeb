@@ -1,4 +1,5 @@
 /* 全局样式 */
+
 html,
 body,
 #app {
@@ -7,6 +8,10 @@ body,
     padding: 0;
     min-width: 1366px;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+* {
+    font-family: Tahoma, Arial, Helvetica, "Microsoft YaHei New", "Microsoft Yahei", sans-serif;
 }
 
 .el-breadcrumb {
@@ -27,12 +32,16 @@ body,
     margin-top: 15px;
 }
 
+
 /* 解决级联选择框的问题 */
+
 div .el-scrollbar__wrap {
     height: 300px !important
 }
 
+
 /* 步骤条 */
+
 .el-steps {
     margin: 15px 0;
 }

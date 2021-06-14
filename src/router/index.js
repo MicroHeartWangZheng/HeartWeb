@@ -8,6 +8,7 @@ import Users from '../views/Users.vue'
 import Message from '../views/Message.vue'
 import Moment from '../views/Moment.vue'
 import My from '../views/My.vue'
+import UserDetail from '../views/UserDetail.vue'
 
 Vue.use(VueRouter)
 
@@ -47,6 +48,10 @@ const router = new VueRouter({
                 {
                     path: '/my',
                     component: My,
+                },
+                {
+                    path: '/userDetail',
+                    component: UserDetail,
                 }
             ]
         },
