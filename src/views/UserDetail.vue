@@ -8,10 +8,31 @@
           <div>{{userDetail.year}}年 | </div>
           <div>{{userDetail.height}}cm | </div>
           <div>{{userDetail.weight}}kg | </div>
-          <div>{{userDetail.education}}</div>
+          <div>{{userDetail.currentCity}}人 | </div>
+          <div>{{userDetail.education}} |</div>
+          <div>{{userDetail.work}}</div>
         </div>
         <div class="tagContainer">
-            <i class="fal fa-id-card fa-3x" style="color: #fd9191; padding-right:8px;"></i>
+          <div>
+            <span class="fa fa-id-card fa-3x" style="color: #fd9191;"></span>
+            <span style="font-size:13px;color: #fd9191;">身份认证</span>
+            <span style="font-size:14px;padding-top:4px">已认证</span>
+          </div>
+          <div>
+            <span class="fa fa-graduation-cap fa-3x"></span>
+            <span style="font-size:13px">学历认证</span>
+            <span style="font-size:14px;padding-top:4px">本科</span>
+          </div>
+          <div>
+            <span class="fa fa-tv fa-3x"></span>
+            <span style="font-size:13px">工作认证</span>
+            <span style="font-size:14px;padding-top:4px">杭州捷配科技</span>
+          </div>
+          <div>
+            <span class="fa fa-home fa-3x"></span>
+            <span style="font-size:13px">现居地</span>
+            <span style="font-size:14px;padding-top:4px">浙江杭州</span>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +55,7 @@ export default {
         currentCity: "滁州",
         education: "本科",
         companyName: "杭州捷配有限公司",
+        work: "软件开发工程师",
         headPic:
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
         pictures: [
@@ -62,7 +84,7 @@ export default {
   .el-image {
     height: 500px;
     width: 370px;
-    border-radius: 10px 0 0 10px;
+    border-radius: 10px;
   }
 
   .rightContainer {
@@ -82,12 +104,28 @@ export default {
       font-size: 14px;
       color: #999999;
       justify-content: center;
-      padding-bottom: 20px;
+      padding-bottom: 10px;
       border-bottom: 1px solid #e4e4e4;
     }
-    .tagContainer{
-        width: 100%;
-        height: 200px;
+    .tagContainer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      div {
+        width: 100px;
+        height: 90px;
+        margin: 30px 0px;
+        padding: 15px 0px;
+        background-color: rgb(242, 242, 242);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        span {
+          text-align: center;
+        }
+      }
     }
   }
 }
