@@ -6,7 +6,7 @@
       </span>
     </div>
     <div class="usersContainer">
-      <div class="userItemContainer" v-for="user in users" :key="user.id">
+      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="user in users" :key="user.id">
         <el-image :src="user.pic" fit="cover"></el-image>
         <div class="userInfoContainer">
           <div class="nickInfo">
@@ -128,7 +128,8 @@ export default {
           education: "硕士",
           work: "公务员",
           pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },{
+        },
+        {
           id: "12345",
           nickName: "Bboobii",
           homeCity: "绍兴",
@@ -224,6 +225,11 @@ export default {
       },
     };
   },
+  methods: {
+    redict(path) {
+      this.$router.push(path);
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -313,5 +319,4 @@ export default {
     }
   }
 }
-
 </style>

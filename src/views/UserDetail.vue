@@ -33,10 +33,31 @@
             <span style="font-size:13px">现居地</span>
             <span style="font-size:14px;padding-top:4px">浙江杭州</span>
           </div>
+
+        </div>
+
+        <div class="wantContainer">
+          <div style="margin-right:10px">
+            <span class="fa fa-heart"></span>
+            <span>求认识</span>
+          </div>
+          <div style="background-color:rgba(0, 0, 0, 0);color: #ff6666;margin-left:10px">
+            <span class="fa fa-plus"></span>
+            <span> 关注</span>
+          </div>
         </div>
       </div>
     </div>
-    <div class="PicsContainer"></div>
+    <div class="picsContainer">
+      <div class="title">
+        <span>生活照片</span>
+      </div>
+
+      <div class="pics">
+        <el-image fit="cover" v-for="(pic,index) in userDetail.pictures" :src="pic"
+          :preview-src-list="userDetail.pictures" :key="index"></el-image>
+      </div>
+    </div>
     <div class="DescContainer"></div>
   </div>
 </template>
@@ -60,6 +81,9 @@ export default {
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
         pictures: [
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
@@ -82,13 +106,13 @@ export default {
   justify-content: space-between;
   border-radius: 10px;
   .el-image {
-    height: 500px;
-    width: 370px;
+    height: 400px;
+    width: 300px;
     border-radius: 10px;
   }
 
   .rightContainer {
-    width: 560px;
+    width: 600px;
     height: 100%;
     color: #999999;
     padding: 20px;
@@ -121,11 +145,75 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-
         span {
           text-align: center;
         }
       }
+    }
+    .wantContainer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      div {
+        width: 128px;
+        height: 22px;
+        color: #fff;
+        padding: 6px 20px;
+        background-color: #ff6666;
+        border: 1px solid #ff6666;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        span {
+          text-align: center;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+.picsContainer {
+  margin-top: 50px;
+  .title {
+    position: relative;
+    text-align: center;
+    margin-bottom: 20px;
+    span:before,
+    span:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      float: left;
+      height: 1px;
+      width: 420px;
+      border-top: 1px dashed #999999;
+    }
+    span:before {
+      left: 0%;
+    }
+    span:after {
+      right: 0%;
+    }
+  }
+  .pics {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+    align-content: flex-start;
+    .el-image {
+      width: 220px;
+      height: 280px;
+      border-radius: 6px;
+    }
+    .pics::after{
+      content: "";
+      width: 220px;
     }
   }
 }
