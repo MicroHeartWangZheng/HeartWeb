@@ -58,7 +58,12 @@
           :preview-src-list="userDetail.pictures" :key="index"></el-image>
       </div>
     </div>
-    <div class="DescContainer"></div>
+    <div class="DescContainer">
+      <div class="title">
+        <span>关于我</span>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -81,7 +86,7 @@ export default {
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
         pictures: [
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
@@ -106,8 +111,8 @@ export default {
   justify-content: space-between;
   border-radius: 10px;
   .el-image {
-    height: 400px;
-    width: 300px;
+    height: 360px;
+    width: 320px;
     border-radius: 10px;
   }
 
@@ -176,45 +181,50 @@ export default {
 }
 
 .picsContainer {
-  margin-top: 50px;
-  .title {
-    position: relative;
-    text-align: center;
-    margin-bottom: 20px;
-    span:before,
-    span:after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      float: left;
-      height: 1px;
-      width: 420px;
-      border-top: 1px dashed #999999;
-    }
-    span:before {
-      left: 0%;
-    }
-    span:after {
-      right: 0%;
-    }
-  }
+  margin-top: 30px;
   .pics {
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
     display: flex;
     flex-wrap: wrap;
-    justify-content:space-between;
+    justify-content: space-between;
     align-content: flex-start;
     .el-image {
       width: 220px;
       height: 280px;
       border-radius: 6px;
     }
-    .pics::after{
+    .pics::after {
       content: "";
       width: 220px;
     }
   }
+}
+
+.title {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20px;
+  span:before,
+  span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    float: left;
+    height: 1px;
+    width: 420px;
+    border-top: 1px dashed #999999;
+  }
+  span:before {
+    left: 0%;
+  }
+  span:after {
+    right: 0%;
+  }
+}
+
+.DescContainer{
+  margin-top: 30px;
 }
 </style>
