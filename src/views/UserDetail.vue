@@ -58,9 +58,34 @@
           :preview-src-list="userDetail.pictures" :key="index"></el-image>
       </div>
     </div>
-    <div class="DescContainer">
+    <div class="descContainer">
       <div class="title">
         <span>关于我</span>
+      </div>
+      <div class="desc">
+        <div class="descItem">
+          <div class="descTitle">
+            <span class="fa fa-circle fa-1x"></span>
+            <span>自我介绍</span>
+          </div>
+          <div class="descContent">
+            自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍
+          </div>
+        </div>
+        <div class="descItem">
+          <div class="descTitle">
+            <span class="fa fa-circle fa-1x"></span>
+            <span>家庭背景</span>
+          </div>
+          <div class="descContent">家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景</div>
+        </div>
+        <div class="descItem">
+          <div class="descTitle">
+            <span class="fa fa-circle fa-1x"></span>
+            <span>理想另一半</span>
+          </div>
+          <div class="descContent">理想另一半</div>
+        </div>
       </div>
     </div>
 
@@ -183,7 +208,7 @@ export default {
 .picsContainer {
   margin-top: 30px;
   .pics {
-    padding: 20px;
+    padding: 12px 12px 0 12px;
     border-radius: 10px;
     background-color: #fff;
     display: flex;
@@ -191,9 +216,10 @@ export default {
     justify-content: space-between;
     align-content: flex-start;
     .el-image {
-      width: 220px;
+      width: 230px;
       height: 280px;
       border-radius: 6px;
+      margin-bottom: 12px;
     }
     .pics::after {
       content: "";
@@ -224,7 +250,40 @@ export default {
   }
 }
 
-.DescContainer{
+.descContainer {
   margin-top: 30px;
+}
+
+.desc {
+  background-color: #fff;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  padding: 20px;
+  .descItem {
+    
+    div {
+      font-size: 13px;
+    }
+    .descTitle {
+      color: #6e6fff;
+      font-size: 13px;
+      font-weight: 700;
+      background-color: #f4f4ff;
+      width: 100px;
+      height: 26px;
+      line-height: 26px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .fa {
+        margin-right: 6px;
+      }
+    }
+    .descContent {
+      margin: 12px 0;
+      line-height: 24px;
+    }
+  }
 }
 </style>
