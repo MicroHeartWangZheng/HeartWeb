@@ -6,7 +6,7 @@
         <div class="titleContainer">
           <span @click="redirect('/users')">找对象</span>
           <span @click="redirect('/moment')">动态</span>
-          <span @click="redirect('/message')">消息</span>
+          <span @click="redirect('/wantlist')">申请列表</span>
           <span @click="redirect('/my')">我的</span>
         </div>
         <div>

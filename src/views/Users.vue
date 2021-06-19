@@ -235,7 +235,7 @@ export default {
 <style lang="less" scoped>
 .page {
   width: 100%;
-  padding-top: 12px;
+  padding-top: 30px;
 }
 .titleContainer {
   display: flex;

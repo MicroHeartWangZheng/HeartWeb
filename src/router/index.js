@@ -5,7 +5,7 @@ import Register from '../components/Register.vue'
 import FindPassword from '../components/FindPassword.vue'
 import Home from '../views/Home.vue'
 import Users from '../views/Users.vue'
-import Message from '../views/Message.vue'
+import WantList from '../views/WantList.vue'
 import Moment from '../views/Moment.vue'
 import My from '../views/My.vue'
 import UserDetail from '../views/UserDetail.vue'
@@ -42,15 +42,15 @@ const router = new VueRouter({
                     component: Moment,
                 },
                 {
-                    path: '/message',
-                    component: Message,
+                    path: '/wantlist',
+                    component: WantList,
                 },
                 {
                     path: '/my',
                     component: My,
                 },
                 {
-                    path: '/userDetail/:id',
+                    path: '/userdetail/:id',
                     component: UserDetail,
                 }
             ]
