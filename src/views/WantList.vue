@@ -6,7 +6,7 @@
         <span>发出的申请</span>
       </div>
       <div class="wantList">
-        <div class="wantItem" v-for="item in wantList" :key="item.id">
+        <div class="wantItem" v-for="(item,index) in wantList" :key="index">
           <div class="baseInfoContainer">
             <div class="img" @click="redict('userdetail/'+item.id)">
               <el-image fit="cover" :src="item.headPic"></el-image>

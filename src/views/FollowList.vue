@@ -1,13 +1,12 @@
 <template>
   <div class="page">
     <div class="titleContainer">
-      <span>非VIP仅看部分用户
-        <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
-      </span>
+      <span>我关注的人</span>
     </div>
     <div class="usersContainer">
-      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="(user,index) in users" :key="index">
-        <el-image :src="user.pic" fit="cover"></el-image>
+      <div class="userItemContainer"  v-for="user in users" :key="user.id">
+        <div class="delete"><span class="fa fa-times"></span></div>
+        <el-image :src="user.pic" fit="cover" @click="redict('/userdetail/'+user.id)"></el-image>
         <div class="userInfoContainer">
           <div class="nickInfo">
             <div>{{user.nickName}} ·</div>
@@ -251,7 +250,7 @@ export default {
     top: 50%;
     float: left;
     height: 1px;
-    width: 360px;
+    width: 430px;
     border-top: 1px dashed #999999;
   }
   span:before {
@@ -260,11 +259,6 @@ export default {
   span:after {
     right: 0%;
   }
-  .vipSearchBtn {
-    margin-left: 10px;
-    font-size: 13px;
-    font-weight: 700;
-  }
 }
 .usersContainer {
   display: flex;
@@ -272,12 +266,19 @@ export default {
   align-content: space-between;
   flex-wrap: wrap;
   .userItemContainer {
-    width: 210px;
+    width: 206px;
     height: 330px;
     background-color: #ffffff;
-    padding: 12px;
+    padding: 15px;
     border-radius: 10px;
     margin-bottom: 16px;
+    position: relative;
+    .delete {
+      position: absolute;
+      right: 3px;
+      top: 0px;
+      color: #ff6666;
+    }
     .el-image {
       width: 100%;
       height: 80%;

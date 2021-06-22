@@ -6,7 +6,7 @@
       </span>
     </div>
     <div class="usersContainer">
-      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="(user,index) in users" :key="index">
+      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="user in users" :key="user.id">
         <el-image :src="user.pic" fit="cover"></el-image>
         <div class="userInfoContainer">
           <div class="nickInfo">

@@ -6,9 +6,12 @@ import FindPassword from '../components/FindPassword.vue'
 import Home from '../views/Home.vue'
 import Users from '../views/Users.vue'
 import WantList from '../views/WantList.vue'
+import FollowList from '../views/FollowList.vue'
 import Moment from '../views/Moment.vue'
 import My from '../views/My.vue'
 import UserDetail from '../views/UserDetail.vue'
+import Vip from '../views/Vip.vue'
+import Setting from '../views/Setting.vue'
 
 Vue.use(VueRouter)
 
@@ -46,12 +49,24 @@ const router = new VueRouter({
                     component: WantList,
                 },
                 {
+                    path: '/followlist',
+                    component: FollowList,
+                },
+                {
                     path: '/my',
                     component: My,
                 },
                 {
                     path: '/userdetail/:id',
                     component: UserDetail,
+                },
+                {
+                    path: '/vip',
+                    component: Vip,
+                },
+                {
+                    path: '/setting',
+                    component: Setting,
                 }
             ]
         },
