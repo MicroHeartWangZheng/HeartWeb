@@ -1,37 +1,53 @@
 <template>
   <div class="page">
     <div class="titleContainer">
-      <span>非VIP仅看部分用户
-        <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
+      <span
+        >非VIP仅看部分用户
+        <el-link class="vipSearchBtn" type="danger" :underline="false"
+          >VIP搜索全部</el-link
+        >
       </span>
     </div>
     <div class="usersContainer">
-      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="(user,index) in users" :key="index">
-        <el-image :src="user.pic" fit="cover"></el-image>
+      <div
+        class="userItemContainer"
+        @click="redict('/userdetail/' + user.id)"
+        v-for="(user, index) in users"
+        :key="index"
+      >
+        <el-image :src="user.headPic" fit="cover"></el-image>
         <div class="userInfoContainer">
           <div class="nickInfo">
-            <div>{{user.nickName}} ·</div>
+            <div>{{ user.nickName }} ·</div>
             <div>已认证</div>
             <div>
-              <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+              <el-image
+                :src="require('../assets/认证.png')"
+                fit="contain"
+              ></el-image>
             </div>
           </div>
           <div class="positionInfo">
-            <div>现居{{user.homeCity}} ·</div>
-            <div>{{user.currentCity}}人</div>
+            <div>现居{{ user.homeCity }} ·</div>
+            <div>{{ user.currentCity }}人</div>
           </div>
-          <div class="baseInfo" style="color:#666666">
-            <div>{{user.year}}年 · </div>
-            <div>{{user.height}}cm · </div>
-            <div>{{user.education}} · </div>
-            <div>{{user.work}}</div>
+          <div class="baseInfo" style="color: #666666">
+            <div>{{ user.year }}年 ·</div>
+            <div>{{ user.height }}cm ·</div>
+            <div>{{ user.educationDesc }} ·</div>
+            <div>{{ user.work }}</div>
           </div>
         </div>
       </div>
     </div>
     <div>
-      <el-pagination background :page-size="search.pageIndex" :pager-count="search.pageSize" layout="prev, pager, next"
-        :total="search.totalCount/search.pageSize">
+      <el-pagination
+        background
+        :page-size="queryInfo.pageIndex"
+        :pager-count="queryInfo.pageSize"
+        layout="prev, pager, next"
+        :total="totalCount / queryInfo.pageSize"
+      >
       </el-pagination>
     </div>
   </div>
@@ -40,195 +56,31 @@
 export default {
   data() {
     return {
-      users: [
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-      ],
-      search: {
+      queryInfo: {
         pageIndex: 1,
         pageSize: 20,
-        totalCount: 101,
       },
+      users: [],
+      totalCount: 0,
     };
   },
   methods: {
+    getList() {
+      const res =  this.$http.get("User/GetList", {
+        params: this.queryInfo,
+      });
+      if (res.success !== true) {
+        return this.$message.error("获取用户列表失败！");
+      }
+      this.users = res.data.items;
+      this.totalCount = res.data.total;
+    },
     redict(path) {
       this.$router.push(path);
     },
+  },
+  created() {
+    getList();
   },
 };
 </script>
