@@ -1,229 +1,46 @@
 <template>
   <div class="page">
     <div class="titleContainer">
-      <span>非VIP仅看部分用户
-        <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
-      </span>
+      <span>我的会员</span>
     </div>
-    <div class="usersContainer">
-      <div class="userItemContainer" @click="redict('/userdetail/'+user.id)" v-for="user in users" :key="user.id">
-        <el-image :src="user.pic" fit="cover"></el-image>
-        <div class="userInfoContainer">
-          <div class="nickInfo">
-            <div>{{user.nickName}} ·</div>
-            <div>已认证</div>
-            <div>
-              <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
-            </div>
-          </div>
-          <div class="positionInfo">
-            <div>现居{{user.homeCity}} ·</div>
-            <div>{{user.currentCity}}人</div>
-          </div>
-          <div class="baseInfo" style="color:#666666">
-            <div>{{user.year}}年 · </div>
-            <div>{{user.height}}cm · </div>
-            <div>{{user.education}} · </div>
-            <div>{{user.work}}</div>
-          </div>
+    <div class="container">
+      <div class="userInfo">
+        <div>
+          <span class="fa fa-user-o fa-3x" style="color:#ff6666"></span>
+          <span style="margin-left: 30px;font-size:700">当前为：免费用户</span>
+        </div>
+        <div>
+          <el-image :src="require('../assets/金币.png')" fit="contain"></el-image>
+          <el-link type="danger" style="margin-left: 30px;">充值记录>></el-link>
         </div>
       </div>
-    </div>
-    <div>
-      <el-pagination background :page-size="search.pageIndex" :pager-count="search.pageSize" layout="prev, pager, next"
-        :total="search.totalCount/search.pageSize">
-      </el-pagination>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>未认证用户</th>
+            <th>认证用户</th>
+            <th>VIP用户</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>异性用户列表</td>
+            <td>仅看部分</td>
+            <td>仅看部分</td>
+            <td>查看全部</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 <script>
 export default {
   data() {
-    return {
-      users: [
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-        {
-          id: "12345",
-          nickName: "Bboobii",
-          homeCity: "绍兴",
-          currentCity: "浙江",
-          year: 94,
-          height: 169,
-          education: "硕士",
-          work: "公务员",
-          pic: "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        },
-      ],
-      search: {
-        pageIndex: 1,
-        pageSize: 20,
-        totalCount: 101,
-      },
-    };
+    return {};
   },
   methods: {
     redict(path) {
@@ -251,7 +68,7 @@ export default {
     top: 50%;
     float: left;
     height: 1px;
-    width: 360px;
+    width: 440px;
     border-top: 1px dashed #999999;
   }
   span:before {
@@ -266,56 +83,32 @@ export default {
     font-weight: 700;
   }
 }
-.usersContainer {
-  display: flex;
-  justify-content: space-between;
-  align-content: space-between;
-  flex-wrap: wrap;
-  .userItemContainer {
-    width: 210px;
-    height: 330px;
-    background-color: #ffffff;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 16px;
+
+.container {
+  width: 100%;
+  height: 1000px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  .userInfo {
+    display: flex;
+    justify-content: space-between;
+
+    div {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 200px;
+      height: 60px;
+    }
+    span {
+      height: 48px;
+      line-height: 48px;
+      
+    }
     .el-image {
-      width: 100%;
-      height: 80%;
-      border-radius: 10px 10px 0 0;
-      margin-bottom: 6px;
-    }
-    .userInfoContainer {
-      height: 18%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-size: 12px;
-      font-family: Tahoma, Arial, Helvetica, "Microsoft YaHei New",
-        "Microsoft Yahei", sans-serif;
-      color: #292929;
-      .nickInfo {
-        display: flex;
-        width: 100%;
-        height: 20px;
-        font-size: 14px;
-        font-weight: 700;
-        color: black;
-        line-height: 22px;
-        div {
-          margin-right: 6px;
-        }
-        .el-image {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
-    .positionInfo,
-    .baseInfo {
-      display: flex;
-      div {
-        margin-right: 6px;
-      }
+      width: 50px;
+      height: 50px;
     }
   }
 }
