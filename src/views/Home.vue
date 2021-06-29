@@ -4,9 +4,9 @@
       <div class="headerContainer">
         <img src="../assets/logo.png">
         <div class="titleContainer">
-          <span @click="redirect('/users')">找对象</span>
+          <span @click="redirect('/users')">用户列表</span>
           <span @click="redirect('/moment')">动态</span>
-          <span @click="redirect('/wantlist')">申请列表</span>
+          <span @click="redirect('/wantlist')">列表</span>
           <el-dropdown @command="handleCommand">
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
