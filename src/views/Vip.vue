@@ -16,7 +16,7 @@
             :src="require('../assets/金币.png')"
             fit="contain"
           ></el-image>
-          <el-link type="danger" style="margin-left: 30px">充值记录>></el-link>
+          <el-link @click="redirect('/orderlist')" type="danger" style="margin-left: 30px">充值记录>></el-link>
         </div>
       </div>
 
@@ -111,7 +111,6 @@
           <div class="discount">6.2折</div>
         </div>
       </div>
-
       <div class="buyButton">购买</div>
     </div>
   </div>
@@ -124,7 +123,7 @@ export default {
     };
   },
   methods: {
-    redict(path) {
+    redirect(path) {
       this.$router.push(path);
     },
     chooseGoods(index) {
@@ -160,11 +159,6 @@ export default {
   }
   span:after {
     right: 0%;
-  }
-  .vipSearchBtn {
-    margin-left: 10px;
-    font-size: 13px;
-    font-weight: 700;
   }
 }
 .container {

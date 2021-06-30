@@ -12,77 +12,82 @@ import My from '../views/My.vue'
 import UserDetail from '../views/UserDetail.vue'
 import Vip from '../views/Vip.vue'
 import Setting from '../views/Setting.vue'
+import OrderList from '../views/OrderList.vue'
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-    routes: [{
-            path: '/',
-            redirect: '/vip'
+  routes: [{
+      path: '/',
+      redirect: '/vip'
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/register',
+      component: Register
+    },
+    {
+      path: '/findpassword',
+      component: FindPassword
+    },
+    {
+      path: '/home',
+      component: Home,
+      redirect: '/users',
+      children: [{
+          path: '/users',
+          component: Users,
         },
         {
-            path: '/login',
-            component: Login
+          path: '/moment',
+          component: Moment,
         },
         {
-            path: '/register',
-            component: Register
+          path: '/wantlist',
+          component: WantList,
         },
         {
-            path: '/findpassword',
-            component: FindPassword
+          path: '/followlist',
+          component: FollowList,
         },
         {
-            path: '/home',
-            component: Home,
-            redirect: '/users',
-            children: [{
-                    path: '/users',
-                    component: Users,
-                },
-                {
-                    path: '/moment',
-                    component: Moment,
-                },
-                {
-                    path: '/wantlist',
-                    component: WantList,
-                },
-                {
-                    path: '/followlist',
-                    component: FollowList,
-                },
-                {
-                    path: '/my',
-                    component: My,
-                },
-                {
-                    path: '/userdetail/:id',
-                    component: UserDetail,
-                },
-                {
-                    path: '/vip',
-                    component: Vip,
-                },
-                {
-                    path: '/setting',
-                    component: Setting,
-                }
-            ]
+          path: '/my',
+          component: My,
         },
-    ]
+        {
+          path: '/userdetail/:id',
+          component: UserDetail,
+        },
+        {
+          path: '/vip',
+          component: Vip,
+        },
+        {
+          path: '/setting',
+          component: Setting,
+        },
+        {
+          path: '/orderlist',
+          component: OrderList,
+        },
+      ]
+    },
+  ]
 })
 
 //导航守卫 
 router.beforeEach((to, from, next) => {
-    // //to 将要访问的路径
-    // //from 来源路径
-    // //next 是一个函数 
-    // if (to.path === '/login') return next();
-    // const token = window.sessionStorage.getItem('token');
+  // //to 将要访问的路径
+  // //from 来源路径
+  // //next 是一个函数 
+  // if (to.path === '/login') return next();
+  // const token = window.sessionStorage.getItem('token');
 
-    // if (!token) return next('/login');
-    next();
+  // if (!token) return next('/login');
+  next();
 });
 
 export default router

@@ -83,6 +83,104 @@ export default {
           headPic:
             "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
         },
+        {
+          id: 1,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 2,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 3,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 1,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 2,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 3,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
+        {
+          id: 3,
+          nickName: "小月亮",
+          year: 94,
+          height: 164,
+          weight: 54,
+          education: "本科",
+          work: "软件开发工程师",
+          wechatId: "MicroHeart",
+          replyTime: "2020-01-26",
+          reviceTime: "2020-01-26 09:00:00",
+          headPic:
+            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
+        },
       ],
       search: {
         pageIndex: 1,
@@ -130,8 +228,7 @@ export default {
   }
   .wantList {
     width: 100%;
-    height: 700px;
-
+    height: 1040px;
     .wantItem {
       width: 800px;
       height: 64px;
@@ -140,6 +237,7 @@ export default {
       padding: 10px 20px;
       border-bottom: 1px solid #f2f2f2;
       justify-content: space-between;
+      border-radius: 10px;
       .baseInfoContainer {
         display: flex;
         align-items: center;
