@@ -77,28 +77,37 @@
         </table>
       </div>
       <div class="goodsContainer">
-        <div class="goodsItem redBorder">
+        <div
+          :class="selectedIndex === 1 ? 'goodsItem redBorder' : 'goodsItem'"
+          @click="chooseGoods(1)"
+        >
           <div class="title">月卡</div>
           <div class="unitPrice">￥1.3/天</div>
           <div class="lineTitle">￥49</div>
           <div class="price">￥39</div>
-          <div class="selectedIcon"></div>
+          <div :class="selectedIndex === 1 ? 'selectedIcon' : 'close'"></div>
           <div class="discount">8折</div>
         </div>
-        <div class="goodsItem">
+        <div
+          :class="selectedIndex === 2 ? 'goodsItem redBorder' : 'goodsItem'"
+          @click="chooseGoods(2)"
+        >
           <div class="title">季卡</div>
           <div class="unitPrice">￥1.1/天</div>
           <div class="lineTitle">￥147</div>
           <div class="price">￥99</div>
-          <div class="selectedIcon"></div>
+          <div :class="selectedIndex === 2 ? 'selectedIcon' : 'close'"></div>
           <div class="discount">6.7折</div>
         </div>
-        <div class="goodsItem">
+        <div
+          :class="selectedIndex === 3 ? 'goodsItem redBorder' : 'goodsItem'"
+          @click="chooseGoods(3)"
+        >
           <div class="title">年卡</div>
           <div class="unitPrice">￥1/天</div>
           <div class="lineTitle">￥588</div>
           <div class="price">￥365</div>
-          <div class="selectedIcon"></div>
+          <div :class="selectedIndex === 3 ? 'selectedIcon' : 'close'"></div>
           <div class="discount">6.2折</div>
         </div>
       </div>
@@ -110,11 +119,16 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      selectedIndex: 2,
+    };
   },
   methods: {
     redict(path) {
       this.$router.push(path);
+    },
+    chooseGoods(index) {
+      this.selectedIndex = index;
     },
   },
 };
@@ -261,6 +275,10 @@ export default {
   bottom: 0;
   border-radius: 14px 0 10px 0;
 }
+.close {
+  display: none;
+}
+
 .discount {
   border-radius: 15px;
   font-size: 14px;
