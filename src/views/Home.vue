@@ -5,7 +5,7 @@
         <img src="../assets/logo.png">
         <div class="titleContainer">
           <span @click="redirect('/users')">用户列表</span>
-          <span @click="redirect('/moment')">动态</span>
+          <span @click="redirect('/momentlist')">动态</span>
           <span @click="redirect('/wantlist')">列表</span>
           <el-dropdown @command="handleCommand">
             <span>我的</span>

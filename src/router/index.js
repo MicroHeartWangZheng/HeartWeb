@@ -13,6 +13,7 @@ import UserDetail from '../views/UserDetail.vue'
 import Vip from '../views/Vip.vue'
 import Setting from '../views/Setting.vue'
 import OrderList from '../views/OrderList.vue'
+import MomentList from '../views/MomentList.vue'
 
 Vue.use(VueRouter)
 
@@ -72,6 +73,10 @@ const router = new VueRouter({
         {
           path: '/orderlist',
           component: OrderList,
+        },
+        {
+          path: '/momentlist',
+          component: MomentList,
         },
       ]
     },
