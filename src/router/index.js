@@ -13,6 +13,7 @@ import Vip from '../views/Vip.vue'
 import Setting from '../views/Setting.vue'
 import OrderList from '../views/OrderList.vue'
 import MomentList from '../views/MomentList.vue'
+import SetpOne from '../views/SetpOne.vue'
 
 Vue.use(VueRouter)
 
@@ -73,6 +74,10 @@ const router = new VueRouter({
           path: '/momentlist',
           component: MomentList,
         },
+        {
+          path: '/SetpOne',
+          component: SetpOne
+        }
       ]
     },
   ]

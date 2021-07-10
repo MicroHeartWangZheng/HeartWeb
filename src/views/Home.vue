@@ -11,6 +11,7 @@
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="fa fa-id-card" command="/my">我的主页</el-dropdown-item>
+               <el-dropdown-item icon="fa fa-id-card" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-eye" command="/followlist">关注列表</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">会员与金币</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
