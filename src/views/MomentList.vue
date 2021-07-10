@@ -1,12 +1,45 @@
 <template>
   <div class="page">
     <div class="contentContainer">
+
+      <!---发表动态-->
+      <div class="createMoment borderRadius">
+        <el-input type="textarea" :rows="3" maxlength="500" v-model="moment.content"></el-input>
+        <div class="pics">
+          <div class="picItemContainer"  v-for="(pic,index) in moment.pictures" :key="index">
+            <div class="fa fa-times" @click="removePic(index)"></div>
+            <el-image class="picItem" :src="pic" :preview-src-list="moment.pictures"></el-image>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="left">
+            <el-upload id="upload"  :on-success="uploadSuccess" action="https://www.yinxingguo.love/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
+              <i class="fa fa-picture-o pointer"></i>
+            </el-upload>
+            <el-dropdown class="topic pointer">
+              <span class="el-dropdown-link">
+                #话题<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>#黄金糕</el-dropdown-item>
+                <el-dropdown-item>#狮子头</el-dropdown-item>
+                <el-dropdown-item>#螺蛳粉</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          <div class="right pointer"> 发送</div>
+        </div>
+      </div>
+
+      <!--标题-->
       <div class="titleContainer borderRadius">
         <div @click="chooseTitle(1)" :class="1==currentIndex?'chooseTitle':''">热门</div>
         <div @click="chooseTitle(2)" :class="2==currentIndex?'chooseTitle':''">实时</div>
         <div @click="chooseTitle(3)" :class="3==currentIndex?'chooseTitle':''">关注</div>
         <div @click="chooseTitle(4)" :class="4==currentIndex?'chooseTitle':''">附近</div>
       </div>
+
+      <!--动态列表--->
       <div class="momentList borderRadius">
         <div class="momentItem borderRadius" v-for="(moment,index) in moments" :key="index">
           <!--用户信息-->
@@ -148,9 +181,29 @@
       </div>
     </div>
     <div class="topicContainer">
-      <span>热门话题</span>
-      <span>热门话题</span>
-      <span>热门话题</span>
+      <div class="topicTitle">
+        <span>话题</span>
+      </div>
+      <div>
+        <span>#</span>
+        <span>话题</span>
+        <span>#热门话题1#</span>
+      </div>
+      <div>
+        <span>#</span>
+        <span>话题</span>
+        <span>#热门话题2#</span>
+      </div>
+      <div>
+        <span>#</span>
+        <span>话题</span>
+        <span>#热门话题3#</span>
+      </div>
+      <div>
+        <span>#</span>
+        <span>话题</span>
+        <span>#热门话题4#</span>
+      </div>
     </div>
     <!--回复对话框-->
     <el-dialog class="dialog" :title="'回复@'+replyDialog.userName" :visible.sync="replyDialog.visible" width="30%">
@@ -169,19 +222,6 @@
       </span>
     </el-dialog>
 
-    <el-backtop target=".momentList" :bottom="100">
-      <div style="
-        height: 100%;
-        width: 100%;
-        background-color: #f2f5f6;
-        box-shadow: 0 0 6px rgba(0,0,0, .12);
-        text-align: center;
-        line-height: 40px;
-        color: #1989fa;
-      ">
-        UP
-      </div>
-    </el-backtop>
   </div>
 
 </template>
@@ -195,6 +235,11 @@ export default {
       },
       totalCount: 0,
       currentIndex: 1,
+      //发布动态
+      moment: {
+        content: "",
+        pictures: [],
+      },
       //回复对话框
       replyDialog: {
         visible: false,
@@ -555,7 +600,20 @@ export default {
       this.complaintDialog.userId = userId;
       this.complaintDialog.commentContent = commentContent;
     },
+    uploadSuccess(response, file, fileList) {
+      this.moment.pictures = [];
+      fileList.forEach((file) => {
+        this.moment.pictures.push(
+          "https://www.yinxingguo.love" + file.response.data
+        );
+      });
+      console.log(this.moment.pictures);
+    },
+    removePic(index){
+      this.moment.pictures.splice(index,1);
+    }
   },
+  mounted() {},
   created() {},
 };
 </script>
@@ -567,10 +625,71 @@ export default {
   justify-content: space-between;
 }
 .contentContainer {
-  width: 700px;
+  width: 674px;
   padding: 0px 10px;
+  .createMoment {
+    background-color: #fff;
+    padding: 20px 20px 10px 20px;
+    margin-bottom: 8px;
+    color: #838383;
+
+    .pics {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      margin: 10px auto;
+      .picItemContainer {
+        position: relative;
+      }
+      .fa {
+        position: absolute;
+        right: 6px;
+        top: 0;
+        color: #ff7777;
+        z-index: 100;
+      }
+      .fa:hover{
+        color: #ff6666;
+      }
+      .picItem {
+        width: 120px;
+        height: 120px;
+        border-radius: 8px;
+        margin-right: 6px;
+      }
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      height: 26px;
+      .left {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100px;
+        .fa-picture-o:hover {
+          background-color: #fff2e5;
+          color: #ff8200;
+        }
+        .el-dropdown-link:hover {
+          color: #ff8200;
+          font-weight: 700;
+        }
+      }
+      .right {
+        padding: 0px 15px;
+        font-size: 14px;
+        line-height: 26px;
+        background-color: #ff8200;
+        color: #fff;
+        border-radius: 13px;
+      }
+      .right:hover {
+        background-color: #ff5900;
+      }
+    }
+  }
   .titleContainer {
-    width: 674px;
     height: 44px;
     font-size: 14px;
     display: flex;
@@ -592,12 +711,16 @@ export default {
     }
   }
 }
+.el-upload-list__item,
+.el-upload {
+  width: 100px !important;
+  height: 100px !important;
+}
 .momentList {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   .momentItem {
-    width: 640px;
     padding: 20px 20px 14px 14px;
     background-color: #fff;
     margin-bottom: 10px;
@@ -649,7 +772,7 @@ export default {
       }
     }
     .bottomItem:hover {
-      color: #ff6666;
+      color: #e6a23c;
     }
   }
   .commentContainer {
@@ -721,7 +844,7 @@ export default {
       font-size: 14px;
     }
     .more:hover {
-      color: #ff6666;
+      color: #e6a23c;
     }
   }
 }
@@ -756,12 +879,21 @@ export default {
 
 .topicContainer {
   width: 260px;
-  height: 400px;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   align-items: flex-start;
   background-color: #fff;
+  div {
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    padding: 0 24px;
+  }
+  .topicTitle {
+    font-size: 16px;
+    padding: 0 20px;
+  }
 }
 
 .el-button {
