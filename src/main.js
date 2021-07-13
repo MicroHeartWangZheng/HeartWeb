@@ -9,7 +9,7 @@ import 'font-awesome/css/font-awesome.min.css';
 
 import axios from 'axios'
 // 远程后台地址
-axios.defaults.baseURL = 'http://localhost:5000/api/'
+axios.defaults.baseURL = 'https://www.yinxingguo.love/api/'
 // 请求在到达服务器之前，先会调用use中的这个回调函数来添加请求头信息
 axios.interceptors.request.use(config => {
   // console.log(config)
