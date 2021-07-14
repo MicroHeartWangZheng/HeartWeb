@@ -14,24 +14,24 @@
         </div>
         <div class="tagContainer">
           <div>
-            <span class="fa fa-id-card fa-3x" style="color: #fd9191;"></span>
-            <span style="font-size:13px;color: #fd9191;">身份认证</span>
+            <span class="fa fa-id-card fa-3x red"></span>
+            <span class="red" style="font-size:13px; font-weight:700">身份认证</span>
             <span style="font-size:14px;padding-top:4px">已认证</span>
           </div>
           <div>
             <span class="fa fa-graduation-cap fa-3x"></span>
-            <span style="font-size:13px">学历认证</span>
-            <span style="font-size:14px;padding-top:4px">本科</span>
+            <span style="font-size:13px;font-weight:700">学历认证</span>
+            <span style="font-size:14px;padding-top:4px">{{userDetail.educationDesc}}</span>
           </div>
           <div>
             <span class="fa fa-tv fa-3x"></span>
-            <span style="font-size:13px">工作认证</span>
-            <span style="font-size:14px;padding-top:4px">杭州捷配科技</span>
+            <span style="font-size:13px;font-weight:700">工作认证</span>
+            <span style="font-size:14px;padding-top:4px">{{userDetail.companyName}}</span>
           </div>
           <div>
             <span class="fa fa-home fa-3x"></span>
-            <span style="font-size:13px">现居地</span>
-            <span style="font-size:14px;padding-top:4px">浙江杭州</span>
+            <span style="font-size:13px;font-weight:700">现居地</span>
+            <span style="font-size:14px;padding-top:4px">{{userDetail.homeProvince}}{{userDetail.homeCity}}</span>
           </div>
 
         </div>
@@ -54,8 +54,7 @@
       </div>
 
       <div class="pics">
-        <el-image fit="cover" v-for="(pic,index) in userDetail.pictures" :src="pic"
-          :preview-src-list="userDetail.pictures" :key="index"></el-image>
+        <el-image fit="cover" v-for="(pic,index) in userDetail.pictures" :src="pic" :preview-src-list="userDetail.pictures" :key="index"></el-image>
       </div>
     </div>
     <div class="descContainer">
@@ -69,7 +68,7 @@
             <span>自我介绍</span>
           </div>
           <div class="descContent">
-            自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍自我介绍
+            {{introduction.myIntroduce}}
           </div>
         </div>
         <div class="descItem">
@@ -77,14 +76,14 @@
             <span class="fa fa-circle fa-1x"></span>
             <span>家庭背景</span>
           </div>
-          <div class="descContent">家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景家庭背景</div>
+          <div class="descContent">{{introduction.homeIntroduce}}</div>
         </div>
         <div class="descItem">
           <div class="descTitle">
             <span class="fa fa-circle fa-1x"></span>
             <span>理想另一半</span>
           </div>
-          <div class="descContent">理想另一半</div>
+          <div class="descContent">{{introduction.halfIntroduce}}</div>
         </div>
       </div>
     </div>
@@ -96,30 +95,26 @@
 export default {
   data() {
     return {
-      userDetail: {
-        nickName: "小月亮",
-        year: 94,
-        height: 164,
-        weight: 54,
-        homeCity: "杭州",
-        currentProvince: "安徽",
-        currentCity: "滁州",
-        education: "本科",
-        companyName: "杭州捷配有限公司",
-        work: "软件开发工程师",
-        headPic:
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        pictures: [
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-        ],
+      userDetail: {},
+      introduction: {
+        myIntroduce: "",
+        homeIntroduce: "",
+        halfIntroduce: "",
       },
     };
+  },
+  methods: {
+    async getDetail() {
+      var userId = this.$route.params.id;
+      const res = await this.$http.get("User/" + userId);
+      console.log("resDetail", res);
+      this.userDetail = res.data;
+      this.introduction = JSON.parse(res.data.introduction);
+      console.log("introduction",this.introduction);
+    },
+  },
+  mounted() {
+    this.getDetail();
   },
 };
 </script>
@@ -177,6 +172,10 @@ export default {
         justify-content: space-between;
         span {
           text-align: center;
+        }
+
+        .red {
+          color: #fd9191;
         }
       }
     }
@@ -260,7 +259,6 @@ export default {
   margin-bottom: 30px;
   padding: 20px;
   .descItem {
-    
     div {
       font-size: 13px;
     }

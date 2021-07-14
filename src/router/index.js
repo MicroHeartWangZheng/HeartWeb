@@ -83,6 +83,12 @@ const router = new VueRouter({
   ]
 })
 
+
+const VueRouterPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+  }
+
 //导航守卫 
 router.beforeEach((to, from, next) => {
   // //to 将要访问的路径

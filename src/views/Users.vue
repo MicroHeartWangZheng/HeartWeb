@@ -1,30 +1,19 @@
 <template>
   <div class="page">
     <div class="titleContainer">
-      <span
-        >非VIP仅看部分用户
-        <el-link class="vipSearchBtn" type="danger" :underline="false"
-          >VIP搜索全部</el-link
-        >
+      <span>非VIP仅看部分用户
+        <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
       </span>
     </div>
     <div class="usersContainer">
-      <div
-        class="userItemContainer"
-        @click="redict('/userdetail/' + user.id)"
-        v-for="(user, index) in users"
-        :key="index"
-      >
+      <div class="userItemContainer" @click="redict('/userdetail/' + user.id)" v-for="(user, index) in users" :key="index">
         <el-image :src="user.headPic" fit="cover"></el-image>
         <div class="userInfoContainer">
           <div class="nickInfo">
             <div>{{ user.nickName }} ·</div>
             <div>已认证</div>
             <div>
-              <el-image
-                :src="require('../assets/认证.png')"
-                fit="contain"
-              ></el-image>
+              <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
             </div>
           </div>
           <div class="positionInfo">
@@ -41,13 +30,7 @@
       </div>
     </div>
     <div>
-      <el-pagination
-        background
-        :page-size="queryInfo.pageIndex"
-        :pager-count="queryInfo.pageSize"
-        layout="prev, pager, next"
-        :total="totalCount / queryInfo.pageSize"
-      >
+      <el-pagination background :page-size="queryInfo.pageIndex" :page-count="queryInfo.pageSize" layout="prev, pager, next" :total="totalCount / queryInfo.pageSize">
       </el-pagination>
     </div>
   </div>
@@ -65,13 +48,11 @@ export default {
     };
   },
   methods: {
-    getList() {
-      const res =  this.$http.get("User/GetList", {
+    async getList() {
+      const res = await this.$http.get("User/GetList", {
         params: this.queryInfo,
       });
-      if (res.success !== true) {
-        return this.$message.error("获取用户列表失败！");
-      }
+      console.log("resGetList", res);
       this.users = res.data.items;
       this.totalCount = res.data.total;
     },
@@ -80,7 +61,7 @@ export default {
     },
   },
   created() {
-    getList();
+    this.getList();
   },
 };
 </script>

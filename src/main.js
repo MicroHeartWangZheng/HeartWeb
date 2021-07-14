@@ -6,6 +6,9 @@ import './plugins/element.js'
 import './assets/css/global.css'
 import './assets/css/normalize.css'
 import 'font-awesome/css/font-awesome.min.css';
+import {
+  Message
+} from 'element-ui';
 
 import axios from 'axios'
 // 远程后台地址
@@ -17,6 +20,24 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = window.sessionStorage.getItem('token')
   // 在最后必须 return config
   return config
+})
+
+axios.interceptors.response.use(response => {
+  console.log("response", response);
+  if (response.status !== 200) {
+    console.log("请重试!");
+    return;
+  }
+
+  if (response.data.success !== true) {
+    Message({
+      message: response.data.message,
+      type: 'error',
+      center: true
+    });
+    return;
+  }
+  return response.data;
 })
 // 挂在到Vue实例，后面可通过this调用
 Vue.prototype.$http = axios

@@ -75,15 +75,15 @@
 
           <div class="row">
             <div class="title">职业</div>
-            <el-input class="right" v-model="user.work" :maxlength="20"></el-input>
+            <el-input class="right" v-model="user.career" :maxlength="20"></el-input>
           </div>
           <el-divider></el-divider>
 
-          <dvi class="row">
+          <div class="row">
             <div class="center">
               <el-button @click="nextSetp(1)">下 一 步</el-button>
             </div>
-          </dvi>
+          </div>
         </div>
 
         <div class="stepTwo" v-if="currentStep==1">
@@ -123,18 +123,17 @@ export default {
     return {
       currentStep: 0,
       user: {
-        nickName: "",
+        nickName: "小度丶小度",
         gender: true,
         birthday: "1990-01-01",
         education: 2,
         height: 170,
         weight: 60,
-        test: ["北京市", "东城区"],
         currentProvince: "北京市",
         currentCity: "东城区",
         homeProvince: "北京市",
         homeCity: "东城区",
-        work: "",
+        career: "干饭人",
       },
       headPic: "",
       pictures: [],
@@ -188,7 +187,52 @@ export default {
       this.user.homeCity = region[1];
     },
     nextSetp(nextSetp) {
-      this.currentStep = nextSetp;
+      var result = false;
+      switch (nextSetp) {
+        case 1:
+          result = this.updateBaseInfo();
+      }
+      if (result) this.currentStep = nextSetp;
+    },
+    async updateBaseInfo() {
+      if (this.user.nickName.length <= 0) {
+        this.$message({
+          message: "请填写昵称",
+          type: "error",
+        });
+        return false;
+      }
+      if (this.user.nickName.length < 2 || this.user.nickName.length > 12) {
+        this.$message({
+          message: "昵称长度在2到12之间",
+          type: "error",
+        });
+        return false;
+      }
+      if (
+        this.user.homeProvince.length <= 0 ||
+        this.user.homeCity.length <= 0
+      ) {
+        this.$message({
+          message: "出生地必填",
+          type: "error",
+        });
+        return false;
+      }
+      if (
+        this.user.currentProvince.length <= 0 ||
+        this.user.currentCity.length <= 0
+      ) {
+        this.$message({
+          message: "现居地必填",
+          type: "error",
+        });
+        return false;
+      }
+      const res = await this.$http.put("User/UpdateBaseInfo", this.user);
+
+      console.log("res", res);
+      return true;
     },
     uploadPicture(response, file, fileList) {
       console.log("response", response);
@@ -227,7 +271,7 @@ export default {
     //初始化地区
     async initRegion() {
       const regions = await this.$http.get("Region");
-      regions.data.data.forEach((region) => {
+      regions.data.forEach((region) => {
         const children = [];
         region.childrens.forEach((child) => {
           children.push({ value: child.name, label: child.name });
