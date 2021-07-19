@@ -5,35 +5,33 @@
       <div class="rightContainer">
         <div class="nickContainer">{{userDetail.nickName}}</div>
         <div class="centenContainer">
-          <div>{{userDetail.year}}年 | </div>
-          <div>{{userDetail.height}}cm | </div>
-          <div>{{userDetail.weight}}kg | </div>
-          <div>{{userDetail.currentCity}}人 | </div>
-          <div>{{userDetail.education}} |</div>
-          <div>{{userDetail.work}}</div>
+          <div>{{userDetail.year}}年 - </div>
+          <div>{{userDetail.height}}cm - </div>
+          <div>{{userDetail.weight}}kg - </div>
+          <div>{{userDetail.homeCity}}人 - </div>
+          <div>{{userDetail.career}}</div>
         </div>
         <div class="tagContainer">
-          <div>
-            <span class="fa fa-id-card fa-3x red"></span>
-            <span class="red" style="font-size:13px; font-weight:700">身份认证</span>
-            <span style="font-size:14px;padding-top:4px">已认证</span>
+          <div :class="userDetail.idCardState==4?'red':''">
+            <span class="fa fa-id-card fa-3x"></span>
+            <span class="tagTitle">身份认证</span>
+            <span class="tagValue">已认证</span>
           </div>
-          <div>
+          <div :class="userDetail.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
-            <span style="font-size:13px;font-weight:700">学历认证</span>
-            <span style="font-size:14px;padding-top:4px">{{userDetail.educationDesc}}</span>
+            <span class="tagTitle">学历认证</span>
+            <span class="tagValue">{{userDetail.educationDesc}}</span>
           </div>
-          <div>
+          <div :class="userDetail.companyState==4?'red':''">
             <span class="fa fa-tv fa-3x"></span>
-            <span style="font-size:13px;font-weight:700">工作认证</span>
-            <span style="font-size:14px;padding-top:4px">{{userDetail.companyName}}</span>
+            <span class="tagTitle">工作认证</span>
+            <span class="tagValue">{{userDetail.companyName}}</span>
           </div>
-          <div>
+          <div class="red">
             <span class="fa fa-home fa-3x"></span>
-            <span style="font-size:13px;font-weight:700">现居地</span>
-            <span style="font-size:14px;padding-top:4px">{{userDetail.homeProvince}}{{userDetail.homeCity}}</span>
+            <span class="tagTitle">现居地</span>
+            <span class="tagValue">{{userDetail.currentCity}}</span>
           </div>
-
         </div>
 
         <div class="wantContainer">
@@ -110,7 +108,7 @@ export default {
       console.log("resDetail", res);
       this.userDetail = res.data;
       this.introduction = JSON.parse(res.data.introduction);
-      console.log("introduction",this.introduction);
+      console.log("introduction", this.introduction);
     },
   },
   mounted() {
@@ -160,6 +158,9 @@ export default {
       width: 100%;
       display: flex;
       justify-content: space-between;
+      .red {
+        color: #fd9191;
+      }
       div {
         width: 100px;
         height: 90px;
@@ -170,12 +171,17 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+
+        .tagTitle {
+          font-size: 13px;
+          font-weight: 700;
+        }
+        .tagValue {
+          font-size: 14px;
+          padding-top: 4px;
+        }
         span {
           text-align: center;
-        }
-
-        .red {
-          color: #fd9191;
         }
       }
     }

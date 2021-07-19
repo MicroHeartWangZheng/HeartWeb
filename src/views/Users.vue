@@ -16,15 +16,15 @@
               <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
             </div>
           </div>
-          <div class="positionInfo">
+          <div class="positionInfo" style="font-size:12px">
             <div>现居{{ user.homeCity }} ·</div>
             <div>{{ user.currentCity }}人</div>
           </div>
-          <div class="baseInfo" style="color: #666666">
+          <div class="baseInfo" style="color:#909399;font-size:10px">
             <div>{{ user.year }}年 ·</div>
             <div>{{ user.height }}cm ·</div>
             <div>{{ user.educationDesc }} ·</div>
-            <div>{{ user.work }}</div>
+            <div>{{ user.career }}</div>
           </div>
         </div>
       </div>
@@ -106,19 +106,18 @@ export default {
   flex-wrap: wrap;
   .userItemContainer {
     width: 210px;
-    height: 330px;
     background-color: #ffffff;
     padding: 12px;
     border-radius: 10px;
     margin-bottom: 16px;
     .el-image {
       width: 100%;
-      height: 80%;
+      height: 264px;
       border-radius: 10px 10px 0 0;
       margin-bottom: 6px;
     }
     .userInfoContainer {
-      height: 18%;
+      height: 70px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
