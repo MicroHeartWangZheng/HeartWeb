@@ -8,7 +8,9 @@
           <div>{{userDetail.year}}年 - </div>
           <div>{{userDetail.height}}cm - </div>
           <div>{{userDetail.weight}}kg - </div>
+          <div>{{userDetail.educationDesc}} - </div>
           <div>{{userDetail.homeCity}}人 - </div>
+          <div>现居{{userDetail.currentCity}} - </div>
           <div>{{userDetail.career}}</div>
         </div>
         <div class="tagContainer">
@@ -20,28 +22,24 @@
           <div :class="userDetail.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
             <span class="tagTitle">学历认证</span>
-            <span class="tagValue">{{userDetail.educationDesc}}</span>
+            <span v-if="setting.HideSchool" class="tagValue">{{userDetail.schoolName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{userDetail.schoolName}}</span>
           </div>
           <div :class="userDetail.companyState==4?'red':''">
             <span class="fa fa-tv fa-3x"></span>
             <span class="tagTitle">工作认证</span>
-            <span class="tagValue">{{userDetail.companyName}}</span>
-          </div>
-          <div class="red">
-            <span class="fa fa-home fa-3x"></span>
-            <span class="tagTitle">现居地</span>
-            <span class="tagValue">{{userDetail.currentCity}}</span>
+            <span v-if="setting.HideCompany" class="tagValue">{{userDetail.companyName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{userDetail.companyName}}</span>
           </div>
         </div>
-
         <div class="wantContainer">
-          <div style="margin-right:10px">
+          <div style="margin-right:10px" @click="want">
             <span class="fa fa-heart"></span>
             <span>求认识</span>
           </div>
-          <div style="background-color:rgba(0, 0, 0, 0);color: #ff6666;margin-left:10px">
+          <div style="background-color:rgba(0, 0, 0, 0);color: #ff6666;margin-left:10px" @click="follow">
             <span class="fa fa-plus"></span>
-            <span> 关注</span>
+            <span>关 注</span>
           </div>
         </div>
       </div>
@@ -99,15 +97,21 @@ export default {
         homeIntroduce: "",
         halfIntroduce: "",
       },
+      setting: {},
     };
   },
   methods: {
     async getDetail() {
       const res = await this.$http.get("User");
-      console.log("resDetail", res);
       this.userDetail = res.data;
       this.introduction = JSON.parse(res.data.introduction);
-      console.log("introduction", this.introduction);
+      this.setting = JSON.parse(res.data.setting);
+    },
+    async want() {
+      this.$message.error("不能申请自己");
+    },
+    async follow() {
+      this.$message.error("不能关注自己");
     },
   },
   mounted() {
@@ -161,7 +165,7 @@ export default {
         color: #fd9191;
       }
       div {
-        width: 100px;
+        width: 160px;
         height: 90px;
         margin: 30px 0px;
         padding: 15px 0px;
