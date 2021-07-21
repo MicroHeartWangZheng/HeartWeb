@@ -1,4 +1,4 @@
-<template>
+    <template>
   <div class="page">
     <div class="titleContainer">
       <span>修改资料</span>
@@ -106,7 +106,91 @@
           </div>
         </div>
         <div class="stepThree" v-if="currentStep==2">
-
+          <div class="authContainer">
+            <div class="authTop">
+              身份认证
+            </div>
+            <div class="authContent">
+              <div class="row">
+                <div class="title">真实姓名</div>
+                <el-input class="right" v-model="user.name" :maxlength="10"></el-input>
+              </div>
+              <el-divider></el-divider>
+              <div class="row">
+                <div class="title">身份证号</div>
+                <el-input class="right" v-model="user.idCardNo" :maxlength="18"></el-input>
+              </div>
+              <el-divider></el-divider>
+              <div class="row">
+                <div class="title">身份证照片(人物面)</div>
+                <el-upload action="https://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
+                  <el-tag v-if="user.idCardPic">{{user.idCardPicFileName}}</el-tag>
+                  <el-button v-else>上传</el-button>
+                </el-upload>
+              </div>
+              <el-divider></el-divider>
+            </div>
+          </div>
+          <div class="authContainer">
+            <div class="authTop">
+              学历认证
+            </div>
+            <div class="authContent">
+              <div class="row">
+                <div class="title">学历</div>
+                <el-select class="right" v-model="user.education" placeholder="学历">
+                  <el-option v-for="education in educations" :key="education.value" :label="education.label" :value="education.value">
+                  </el-option>
+                </el-select>
+              </div>
+              <el-divider></el-divider>
+              <div class="row">
+                <div class="title">学校名称(全称)</div>
+                <el-input class="right" v-model="user.schoolName" :maxlength="20"></el-input>
+              </div>
+              <el-divider></el-divider>
+              <div class="row">
+                <div class="title">学信网验证码</div>
+                <el-input class="right" v-model="user.xHWCode" :maxlength="20"></el-input>
+              </div>
+              <el-divider></el-divider>
+            </div>
+          </div>
+          <div class="authContainer">
+            <div class="authTop">
+              工作认证
+            </div>
+            <div class="authContent">
+              <div class="row">
+                <div class="title">公司名称</div>
+                <el-input class="right" placeholder="公司全称" v-model="user.companyName" :maxlength="20"></el-input>
+              </div>
+              <el-divider></el-divider>
+              <div class="row">
+                <div class="title">证明图片(钉钉/微信/合同)</div>
+                <el-upload action="https://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
+                  <el-tag v-if="user.companyPic">{{user.companyPicFileName}}</el-tag>
+                  <el-button v-else>上传</el-button>
+                </el-upload>
+              </div>
+              <el-divider></el-divider>
+            </div>
+          </div>
+          <div class="authContainer">
+            <div class="authTop">
+              联系信息
+            </div>
+            <div class="authContent">
+              <div class="row">
+                <div class="title">微信号</div>
+                <el-input class="right" placeholder="用于" v-model="user.nickName" :maxlength="20"></el-input>
+              </div>
+              <el-divider></el-divider>
+            </div>
+          </div>
+          <div class="center">
+            <el-button @click="submit()">完 成</el-button>
+          </div>
         </div>
       </div>
 
@@ -121,20 +205,8 @@
 export default {
   data() {
     return {
-      currentStep: 0,
-      user: {
-        nickName: "小度丶小度",
-        gender: true,
-        birthday: "1990-01-01",
-        education: 2,
-        height: 170,
-        weight: 60,
-        currentProvince: "北京市",
-        currentCity: "东城区",
-        homeProvince: "北京市",
-        homeCity: "东城区",
-        career: "干饭人",
-      },
+      currentStep: 1,
+      user: {},
       headPic: "",
       pictures: [],
       pictureDialog: {
@@ -175,6 +247,20 @@ export default {
     };
   },
   methods: {
+    //获取
+    async getUser() {
+      var res = await this.$http.get("user/");
+      console.log("userDetail", res);
+    },
+    submit() {},
+    uploadCompanyPicSuccess(res, file) {
+      this.extend.companyPic = res.data;
+      this.extend.companyPicFileName = file.name;
+    },
+    uploadIdPicSuccess(res, file) {
+      this.extend.idCardPic = res.data;
+      this.extend.idCardPicFileName = file.name;
+    },
     redirect(path) {
       this.$router.push(path);
     },
@@ -192,7 +278,8 @@ export default {
         case 1:
           result = this.updateBaseInfo();
       }
-      if (result) this.currentStep = nextSetp;
+      // if (result)
+      this.currentStep = nextSetp;
     },
     async updateBaseInfo() {
       if (this.user.nickName.length <= 0) {
@@ -288,6 +375,7 @@ export default {
     this.initHeightOptions();
     this.initWeightOptions();
     this.initRegion();
+    this.getUser();
   },
 };
 </script>
@@ -320,10 +408,11 @@ export default {
     right: 0%;
   }
 }
+
 .contentContainer {
   width: 100%;
   background-color: #fff;
-  height: 1000px;
+  height: 1020px;
   .content {
     width: 470px;
     margin: auto;
@@ -360,6 +449,17 @@ export default {
   flex-wrap: wrap;
 }
 
+.authContainer {
+  width: 100%;
+  .authTop {
+    margin: 30px 0px 10px 0px;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 550;
+    color: #666666;
+  }
+}
+
 .picItem {
   height: 140px;
   width: 140px;
@@ -389,7 +489,7 @@ export default {
 .center {
   width: 100%;
   text-align: center;
-  margin: 50px auto 20px auto;
+  margin: 30px auto 20px auto;
 }
 .center .el-button {
   width: 200px;
