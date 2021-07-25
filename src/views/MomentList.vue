@@ -13,7 +13,7 @@
         </div>
         <div class="bottom">
           <div class="left">
-            <el-upload id="upload"  :on-success="uploadSuccess" action="https://www.yinxingguo.love/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
+            <el-upload id="upload"  :on-success="uploadSuccess" action="https://localhost/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
               <i class="fa fa-picture-o pointer"></i>
             </el-upload>
             <el-dropdown class="topic pointer">
@@ -604,7 +604,7 @@ export default {
       this.moment.pictures = [];
       fileList.forEach((file) => {
         this.moment.pictures.push(
-          "https://www.yinxingguo.love" + file.response.data
+          "https://localhost" + file.response.data
         );
       });
       console.log(this.moment.pictures);

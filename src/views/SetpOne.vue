@@ -1,13 +1,16 @@
     <template>
   <div class="page">
     <div class="titleContainer">
-      <span>修改资料</span>
+      <span>{{title}}</span>
+    </div>
+    <div class="titleContainer">
+      <div style="font-size:14px">{{desc}}</div>
     </div>
     <div class="contentContainer borderRadius">
 
       <div class="content">
         <el-steps class="steps" :active="currentStep" finish-status="success">
-          <el-step title="基础信息"></el-step>
+          <el-step title="基本资料"></el-step>
           <el-step title="图片信息"></el-step>
           <el-step title="认证信息"></el-step>
         </el-steps>
@@ -20,8 +23,8 @@
           <el-divider></el-divider>
 
           <div class="row">
-            <div class="title">性别（认证后不能修改）</div>
-            <el-select class="right" v-model="user.gender" placeholder="男">
+            <div class="title">性别<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+            <el-select class="right" v-model="user.gender" :disabled="user.idCardState==4?true:false" placeholder="男">
               <el-option v-for="genderOption in genderOptions" :key="genderOption.value" :label="genderOption.label" :value="genderOption.value">
               </el-option>
             </el-select>
@@ -29,14 +32,15 @@
           <el-divider></el-divider>
 
           <div class="row">
-            <div class="title">出生日期（认证后不能修改）</div>
-            <el-date-picker class="right" v-model="user.birthday" :clearable="false" type="date" placeholder="选择日期"></el-date-picker>
+            <div class="title">出生日期<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+            <el-date-picker class="right" :disabled="user.idCardState==4?true:false" v-model="user.birthDate" value-format="yyyy-MM-dd" :clearable="false" type="date" placeholder="选择日期">
+            </el-date-picker>
           </div>
           <el-divider></el-divider>
 
           <div class="row">
-            <div class="title">学历</div>
-            <el-select class="right" v-model="user.education" placeholder="学历">
+            <div class="title">学历<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+            <el-select class="right" v-model="user.education" :disabled="user.educationState==4?true:false" placeholder="学历">
               <el-option v-for="education in educations" :key="education.value" :label="education.label" :value="education.value">
               </el-option>
             </el-select>
@@ -44,8 +48,8 @@
           <el-divider></el-divider>
 
           <div class="row">
-            <div class="title">身高</div>
-            <el-select class="right" v-model="user.height" placeholder="身高(cm)">
+            <div class="title">身高<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+            <el-select class="right" :disabled="user.idCardState==4?true:false" v-model="user.height" placeholder="身高(cm)">
               <el-option v-for="heightOption in heightOptions" :key="heightOption.value" :label="heightOption.label" :value="heightOption.value">
               </el-option>
             </el-select>
@@ -62,14 +66,16 @@
           <el-divider></el-divider>
 
           <div class="row">
-            <div class="title">出生地（认证后不能修改）</div>
-            <el-cascader class="right" :options="regions" @change="chooseHome"></el-cascader>
+            <div class="title">出生地<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+            <el-cascader class="right" :disabled="user.idCardState==4?true:false" :value="[user.currentProvince,user.currentCity]" :options="regions" @change="chooseHome">
+            </el-cascader>
           </div>
           <el-divider></el-divider>
 
           <div class="row">
             <div class="title">现居地</div>
-            <el-cascader class="right" :options="regions" @change="chooseCurrent"></el-cascader>
+            <el-cascader class="right" :value="[user.homeProvince,user.homeCity]" :options="regions" @change="chooseCurrent">
+            </el-cascader>
           </div>
           <el-divider></el-divider>
 
@@ -89,19 +95,22 @@
         <div class="stepTwo" v-if="currentStep==1">
           <div class="stepTwoContent">
             <div class="picItem pointer" v-for="(pic,index) in pictures" :key="index">
-              <el-image :src="pic" fit="cover" style="width: 100%; height: 100%" :preview-src-list="pictures"></el-image>
+              <el-image :src="pic" fit="cover" style="width: 100%; height: 100%" :preview-src-list="pictures">
+              </el-image>
               <div class="bottom">
-                <div>设为头像</div>
-                <div>删除</div>
+                <div v-if="headPicIndex!==index" @click="setHeadPic(index)">设为封面</div>
+                <div v-else>封面</div>
+                <div @click="deletePic(index)">删除</div>
               </div>
             </div>
-            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="https://www.yinxingguo.love/api/File/Upload">
+            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="https://localhost/api/File/Upload">
               <div class="picItem pointer">
                 <i class="el-icon-plus"></i>
               </div>
             </el-upload>
           </div>
-          <div class="center">
+          <div class="stepTwoBottom">
+            <el-button @click="beforeSetp(0)">上 一 步</el-button>
             <el-button @click="nextSetp(2)">下 一 步</el-button>
           </div>
         </div>
@@ -123,7 +132,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">身份证照片(人物面)</div>
-                <el-upload action="https://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
+                <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
                   <el-tag v-if="user.idCardPic">{{user.idCardPicFileName}}</el-tag>
                   <el-button v-else>上传</el-button>
                 </el-upload>
@@ -168,7 +177,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">证明图片(钉钉/微信/合同)</div>
-                <el-upload action="https://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
+                <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
                   <el-tag v-if="user.companyPic">{{user.companyPicFileName}}</el-tag>
                   <el-button v-else>上传</el-button>
                 </el-upload>
@@ -205,10 +214,12 @@
 export default {
   data() {
     return {
-      currentStep: 1,
+      currentStep: 0,
+      title: "基本资料",
+      desc: "以下资料都是必填项。你想多了解一些未来的Ta，Ta也一样 ^_^",
       user: {},
-      headPic: "",
       pictures: [],
+      headPicIndex: 0,
       pictureDialog: {
         visible: false,
         pictureUrl: "",
@@ -249,17 +260,65 @@ export default {
   methods: {
     //获取
     async getUser() {
-      var res = await this.$http.get("user/");
-      console.log("userDetail", res);
+      var res = await this.$http.get("user");
+      this.user = res.data;
+      this.user.pictures.forEach((item, index, arr) => {
+        this.pictures.unshift(item);
+      });
+      this.pictures.unshift(this.user.headPic);
     },
     submit() {},
+    setHeadPic(headPicIndex) {
+      this.headPicIndex = headPicIndex;
+    },
+    deletePic(index) {
+      if (index == this.headPicIndex) this.headPicIndex = 0;
+      this.pictures.splice(index, 1);
+    },
+    async updateHeadPic() {
+      var req = {
+        headPic: this.pictures[this.headPicIndex],
+      };
+      var res = await this.$http.put("User/UpdateHeadPic", req);
+    },
+    async updatePictures() {
+      this.pictures.splice(this.headPicIndex, 1);
+      var req = {
+        Pictures: pictures,
+      };
+      var res = await this.$http.put("UserExtend/UpdatePictures", req);
+    },
+    async updateIdCard() {
+      var req = {
+        name: this.user.name,
+        idCardNo: this.user.idCardNo,
+        idCardPic: this.user.idCardPic,
+      };
+      var res = await this.$http.put("UserExtend/UpdateIdCard", req);
+    },
+    async updateCompany() {
+      var res = await this.$http.put(
+        "UserExtend/UpdateCompany?companyName=" +
+          this.user.companyName +
+          "&companyPic=" +
+          this.user.companyPic
+      );
+    },
+    async updateEducation() {
+      var req = {
+        XHWCode: this.user.xHWCode,
+        SchoolName: this.user.schoolName,
+        Education: this.user.education,
+      };
+      var res = await this.$http.put("UserExtend/UpdateEducation", req);
+    },
     uploadCompanyPicSuccess(res, file) {
-      this.extend.companyPic = res.data;
-      this.extend.companyPicFileName = file.name;
+      this.user.companyPic = res.data;
+      this.user.companyPicFileName = file.name;
     },
     uploadIdPicSuccess(res, file) {
-      this.extend.idCardPic = res.data;
-      this.extend.idCardPicFileName = file.name;
+      this.user.idCardPic = res.data;
+      this.user.idCardPicFileName = file.name;
     },
     redirect(path) {
       this.$router.push(path);
@@ -272,16 +331,37 @@ export default {
       this.user.homeProvince = region[0];
       this.user.homeCity = region[1];
     },
+    beforeSetp(beforeSetp) {
+      switch (beforeSetp) {
+        case 0:
+          this.title = "基本资料";
+          this.desc =
+            "以下资料都是必填项。你想多了解一些未来的Ta，Ta也一样 ^_^";
+          break;
+        case 1:
+          this.title = "照片";
+          this.desc = "上传展示你真实风采的照片，给Ta留下美好的第一印象";
+          break;
+      }
+      this.currentStep = beforeSetp;
+    },
     nextSetp(nextSetp) {
       var result = false;
       switch (nextSetp) {
         case 1:
+          this.title = "照片";
+          this.desc = "上传展示你真实风采的照片，给Ta留下美好的第一印象";
           result = this.updateBaseInfo();
+          break;
+        case 2:
+          result = this.updateHeadPic();
+          this.updatePictures();
+          break;
       }
-      // if (result)
-      this.currentStep = nextSetp;
+      if (result) this.currentStep = nextSetp;
     },
     async updateBaseInfo() {
+      console.log("birthDate", this.user.birthDate);
       if (this.user.nickName.length <= 0) {
         this.$message({
           message: "请填写昵称",
@@ -317,30 +397,17 @@ export default {
         return false;
       }
       const res = await this.$http.put("User/UpdateBaseInfo", this.user);
-
-      console.log("res", res);
-      return true;
+      console.log("updateBaseInfoResponse", res);
+      return res ? true : false;
     },
     uploadPicture(response, file, fileList) {
-      console.log("response", response);
-      console.log("file", file);
-      console.log("fileList", fileList);
-      this.pictures.push("https://www.yinxingguo.love" + file.response.data);
+      this.pictures.push("https://localhost" + file.response.data);
     },
     //点击 放大图片
     bigPicture(file) {
       this.pictureDialog.visible = true;
       this.pictureDialog.pictureUrl = file.url;
     },
-    //删除图片
-    removePicture(file) {
-      this.pictures.forEach(function (item, index, arr) {
-        if (item.url == file.url) {
-          arr.splice(index, 1);
-        }
-      });
-    },
-
     //初始化身高
     initHeightOptions() {
       var that = this;
@@ -412,7 +479,6 @@ export default {
 .contentContainer {
   width: 100%;
   background-color: #fff;
-  height: 1020px;
   .content {
     width: 470px;
     margin: auto;
@@ -449,6 +515,23 @@ export default {
   flex-wrap: wrap;
 }
 
+.stepTwoBottom {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+
+  .el-button {
+    width: 160px;
+    border-radius: 50px;
+    color: #fff;
+    margin: 0 30px;
+    background-color: #ff7777;
+  }
+  .el-button:hover {
+    background-color: #ff6666;
+  }
+}
+
 .authContainer {
   width: 100%;
   .authTop {
@@ -464,7 +547,7 @@ export default {
   height: 140px;
   width: 140px;
   background-color: #fbfbff;
-  border: 1px dashed #c0ccda;
+  border: 1px dashed #cdcbcb;
   border-radius: 6px;
   box-sizing: border-box;
   line-height: 140px;
@@ -475,15 +558,16 @@ export default {
 .picItem .bottom {
   position: absolute;
   bottom: 0px;
-  opacity: 0.3;
-  background-color: #c0ccda;
-  width: 100%;
+  opacity: 0.7;
+  background-color: #f2f2f2;
+  width: 124px;
   height: 30px;
   line-height: 30px;
   font-size: 12px;
   color: #ff6666;
   display: flex;
   justify-content: space-between;
+  padding: 0 8px;
 }
 
 .center {
