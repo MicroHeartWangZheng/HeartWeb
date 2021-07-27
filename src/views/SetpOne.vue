@@ -121,19 +121,20 @@
             </div>
             <div class="authContent">
               <div class="row">
-                <div class="title">真实姓名</div>
-                <el-input class="right" v-model="user.name" :maxlength="10"></el-input>
+                <div class="title">真实姓名<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+                <el-input class="right" :disabled="user.idCardState==4?true:false" v-model="user.name" :maxlength="10"></el-input>
               </div>
               <el-divider></el-divider>
               <div class="row">
-                <div class="title">身份证号</div>
-                <el-input class="right" v-model="user.idCardNo" :maxlength="18"></el-input>
+                <div class="title">身份证号<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
+                <el-input class="right" :disabled="user.idCardState==4?true:false" v-model="user.idCardNo" :maxlength="18"></el-input>
               </div>
               <el-divider></el-divider>
               <div class="row">
-                <div class="title">身份证照片(人物面)</div>
+                <div class="title">身份证照片</div>
                 <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
-                  <el-tag v-if="user.idCardPic">{{user.idCardPicFileName}}</el-tag>
+                  <el-tag v-if="user.idCardPicFileName">{{user.idCardPicFileName}}</el-tag>
+                  <el-tag v-else-if="user.idCardPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
                 </el-upload>
               </div>
@@ -147,20 +148,20 @@
             <div class="authContent">
               <div class="row">
                 <div class="title">学历</div>
-                <el-select class="right" v-model="user.education" placeholder="学历">
+                <el-select class="right" v-model="user.education" placeholder="学历" :disabled="user.educationState==4?true:false">
                   <el-option v-for="education in educations" :key="education.value" :label="education.label" :value="education.value">
                   </el-option>
                 </el-select>
               </div>
               <el-divider></el-divider>
               <div class="row">
-                <div class="title">学校名称(全称)</div>
+                <div class="title">学校名称<span style="color:#b5b4b4;font-size:12px;">（全称）</span></div>
                 <el-input class="right" v-model="user.schoolName" :maxlength="20"></el-input>
               </div>
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">学信网验证码</div>
-                <el-input class="right" v-model="user.xHWCode" :maxlength="20"></el-input>
+                <el-input class="right" v-model="user.xhwCode" :maxlength="20"></el-input>
               </div>
               <el-divider></el-divider>
             </div>
@@ -176,9 +177,10 @@
               </div>
               <el-divider></el-divider>
               <div class="row">
-                <div class="title">证明图片(钉钉/微信/合同)</div>
+                <div class="title">证明图片<span style="color:#b5b4b4;font-size:12px;">(钉钉/微信/合同)</span></div>
                 <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
-                  <el-tag v-if="user.companyPic">{{user.companyPicFileName}}</el-tag>
+                  <el-tag v-if="user.companyPicFileName">{{user.companyPicFileName}}</el-tag>
+                  <el-tag v-else-if="user.companyPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
                 </el-upload>
               </div>
@@ -191,14 +193,18 @@
             </div>
             <div class="authContent">
               <div class="row">
-                <div class="title">微信号</div>
-                <el-input class="right" placeholder="用于" v-model="user.nickName" :maxlength="20"></el-input>
+                <div class="title">微信号<span style="color:#b5b4b4;font-size:12px;">(用于申请通过后联系)</span></div>
+                <el-input class="right" placeholder="用于" v-model="user.weChatId" :maxlength="20"></el-input>
               </div>
               <el-divider></el-divider>
             </div>
           </div>
-          <div class="center">
+          <div class="stepTwoBottom">
+            <el-button @click="beforeSetp(1)">上 一 步</el-button>
             <el-button @click="submit()">完 成</el-button>
+          </div>
+          <div class="center">
+
           </div>
         </div>
       </div>
@@ -211,6 +217,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -267,50 +274,90 @@ export default {
       });
       this.pictures.unshift(this.user.headPic);
     },
-    submit() {},
+    async submit() {
+      var result = await this.updateIdCard();
+      if (!result) return false;
+      result = await this.updateCompany();
+      result = await this.updateEducation();
+    },
     setHeadPic(headPicIndex) {
       this.headPicIndex = headPicIndex;
     },
     deletePic(index) {
       if (index == this.headPicIndex) this.headPicIndex = 0;
+      if (index < this.headPicIndex) this.headPicIndex--;
       this.pictures.splice(index, 1);
     },
     async updateHeadPic() {
+      if (this.pictures.length == 0) {
+        this.$message({
+          message: "请至少上传一张图片",
+          type: "error",
+        });
+        return false;
+      }
       var req = {
         headPic: this.pictures[this.headPicIndex],
       };
       var res = await this.$http.put("User/UpdateHeadPic", req);
+      return res ? true : false;
     },
     async updatePictures() {
       this.pictures.splice(this.headPicIndex, 1);
+      if (this.pictures.length == 0) return;
       var req = {
-        Pictures: pictures,
+        Pictures: this.pictures,
       };
-      var res = await this.$http.put("UserExtend/UpdatePictures", req);
+      await this.$http.put("UserExtend/UpdatePictures", req);
     },
     async updateIdCard() {
+      if (user.name.length == 0 || user.name.length > 10) {
+        this.$message({
+          message: "请填写真实姓名",
+          type: "error",
+        });
+        return false;
+      }
+      if (user.idCardNo.length != 18) {
+        this.$message({
+          message: "请填写真实身份证号",
+          type: "error",
+        });
+        return false;
+      }
+      if (user.idCardPic.length == 0) {
+        this.$message({
+          message: "请上传身份证人物面照片",
+          type: "error",
+        });
+        return false;
+      }
+
       var req = {
         name: this.user.name,
         idCardNo: this.user.idCardNo,
         idCardPic: this.user.idCardPic,
       };
-      var res = await this.$http.put("UserExtend/UpdateIdCard", req);
+      await this.$http.put("UserExtend/UpdateIdCard", req);
+      return true;
     },
     async updateCompany() {
-      var res = await this.$http.put(
+      await this.$http.put(
         "UserExtend/UpdateCompany?companyName=" +
           this.user.companyName +
           "&companyPic=" +
           this.user.companyPic
       );
+      return true;
     },
     async updateEducation() {
       var req = {
-        XHWCode: this.user.xHWCode,
+        XHWCode: this.user.xhwCode,
         SchoolName: this.user.schoolName,
         Education: this.user.education,
       };
-      var res = await this.$http.put("UserExtend/UpdateEducation", req);
+      await this.$http.put("UserExtend/UpdateEducation", req);
+      return true;
     },
     uploadCompanyPicSuccess(res, file) {
       this.user.companyPic = res.data;
@@ -345,23 +392,23 @@ export default {
       }
       this.currentStep = beforeSetp;
     },
-    nextSetp(nextSetp) {
+    async nextSetp(nextSetp) {
       var result = false;
       switch (nextSetp) {
         case 1:
           this.title = "照片";
           this.desc = "上传展示你真实风采的照片，给Ta留下美好的第一印象";
-          result = this.updateBaseInfo();
+          result = await this.updateBaseInfo();
           break;
         case 2:
-          result = this.updateHeadPic();
-          this.updatePictures();
+          result = await this.updateHeadPic();
+          await this.updatePictures();
           break;
       }
+      console.log("result", result);
       if (result) this.currentStep = nextSetp;
     },
     async updateBaseInfo() {
-      console.log("birthDate", this.user.birthDate);
       if (this.user.nickName.length <= 0) {
         this.$message({
           message: "请填写昵称",
@@ -601,6 +648,10 @@ export default {
   border-color: #ff6666;
 }
 
+.row .el-tag {
+  background-color: #ff7777;
+  color: #fff;
+}
 .borderRadius {
   border-radius: 8px;
 }
