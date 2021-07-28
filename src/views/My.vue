@@ -1,35 +1,35 @@
 <template>
   <div class="page">
     <div class="baseInfoContainer">
-      <el-image fit="cover" :src="userDetail.headPic" alt=""></el-image>
+      <el-image fit="cover" :src="user.headPic" alt=""></el-image>
       <div class="rightContainer">
-        <div class="nickContainer">{{userDetail.nickName}}</div>
+        <div class="nickContainer">{{user.nickName}}</div>
         <div class="centenContainer">
-          <div>{{userDetail.year}}年 - </div>
-          <div>{{userDetail.height}}cm - </div>
-          <div>{{userDetail.weight}}kg - </div>
-          <div>{{userDetail.educationDesc}} - </div>
-          <div>{{userDetail.homeCity}}人 - </div>
-          <div>现居{{userDetail.currentCity}} - </div>
-          <div>{{userDetail.career}}</div>
+          <div>{{user.year}}年 - </div>
+          <div>{{user.height}}cm - </div>
+          <div>{{user.weight}}kg - </div>
+          <div>{{user.educationDesc}} - </div>
+          <div>{{user.homeCity}}人 - </div>
+          <div>现居{{user.currentCity}} - </div>
+          <div>{{user.career}}</div>
         </div>
         <div class="tagContainer">
-          <div :class="userDetail.idCardState==4?'red':''">
+          <div :class="user.idCardState==4?'red':''">
             <span class="fa fa-id-card fa-3x"></span>
             <span class="tagTitle">身份认证</span>
             <span class="tagValue">已认证</span>
           </div>
-          <div :class="userDetail.educationState==4?'red':''">
+          <div :class="user.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
             <span class="tagTitle">学历认证</span>
-            <span v-if="setting.HideSchool" class="tagValue">{{userDetail.schoolName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{userDetail.schoolName}}</span>
+            <span v-if="setting.HideSchool" class="tagValue">{{user.schoolName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{user.schoolName}}</span>
           </div>
-          <div :class="userDetail.companyState==4?'red':''">
+          <div :class="user.companyState==4?'red':''">
             <span class="fa fa-tv fa-3x"></span>
             <span class="tagTitle">工作认证</span>
-            <span v-if="setting.HideCompany" class="tagValue">{{userDetail.companyName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{userDetail.companyName}}</span>
+            <span v-if="setting.HideCompany" class="tagValue">{{user.companyName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{user.companyName}}</span>
           </div>
         </div>
         <div class="wantContainer">
@@ -47,15 +47,20 @@
     <div class="picsContainer">
       <div class="title">
         <span>生活照片</span>
+        <el-link class="redirect" type="danger" @click="redirect('/UpdatePictures')" :underline="false">修改</el-link>
       </div>
 
-      <div class="pics">
-        <el-image fit="cover" v-for="(pic,index) in userDetail.pictures" :src="pic" :preview-src-list="userDetail.pictures" :key="index"></el-image>
-      </div>
+      <el-row :gutter="20" class="pics" style="margin:0px;">
+        <el-col :span="6" v-for="(pic,index) in user.pictures" :key="index">
+          <el-image fit="cover" :src="pic" :preview-src-list="user.pictures"></el-image>
+        </el-col>
+      </el-row>
+
     </div>
     <div class="descContainer">
       <div class="title">
         <span>关于我</span>
+        <el-link class="redirect" type="danger" :underline="false">修改</el-link>
       </div>
       <div class="desc">
         <div class="descItem">
@@ -64,7 +69,7 @@
             <span>自我介绍</span>
           </div>
           <div class="descContent">
-            {{introduction.myIntroduce}}
+            <el-input type="textarea" placeholder="请输入内容" v-model="introduction.myIntroduce"  autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
         <div class="descItem">
@@ -91,7 +96,7 @@
 export default {
   data() {
     return {
-      userDetail: {},
+      user: {},
       introduction: {
         myIntroduce: "",
         homeIntroduce: "",
@@ -103,9 +108,12 @@ export default {
   methods: {
     async getDetail() {
       const res = await this.$http.get("User");
-      this.userDetail = res.data;
-      this.introduction = JSON.parse(res.data.introduction);
-      this.setting = JSON.parse(res.data.setting);
+      this.user = res.data;
+      this.introduction = JSON.parse(this.user.introduction);
+      this.setting = JSON.parse(this.user.setting);
+    },
+    redirect(path) {
+      this.$router.push(path);
     },
     async want() {
       this.$message.error("不能申请自己");
@@ -216,13 +224,9 @@ export default {
 .picsContainer {
   margin-top: 30px;
   .pics {
-    padding: 12px 12px 0 12px;
+    padding-top: 12px;
     border-radius: 10px;
     background-color: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: flex-start;
     .el-image {
       width: 230px;
       height: 280px;
@@ -255,6 +259,12 @@ export default {
   }
   span:after {
     right: 0%;
+  }
+
+  .redirect {
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: 700;
   }
 }
 
@@ -292,5 +302,11 @@ export default {
       line-height: 24px;
     }
   }
+}
+
+/deep/ .descContent .el-textarea .el-textarea__inner {
+  border: none;
+  font-size: 14px;
+  color: #000;
 }
 </style>

@@ -217,7 +217,6 @@
   </div>
 </template>
 <script>
-
 export default {
   data() {
     return {
@@ -276,9 +275,9 @@ export default {
     },
     async submit() {
       var result = await this.updateIdCard();
-      if (!result) return false;
-      result = await this.updateCompany();
-      result = await this.updateEducation();
+      if (result) result = await this.updateCompany();
+      if (result) result = await this.updateEducation();
+      if (result) this.redirect("My/");
     },
     setHeadPic(headPicIndex) {
       this.headPicIndex = headPicIndex;
@@ -304,28 +303,27 @@ export default {
     },
     async updatePictures() {
       this.pictures.splice(this.headPicIndex, 1);
-      if (this.pictures.length == 0) return;
       var req = {
         Pictures: this.pictures,
       };
       await this.$http.put("UserExtend/UpdatePictures", req);
     },
     async updateIdCard() {
-      if (user.name.length == 0 || user.name.length > 10) {
+      if (this.user.name.length == 0 || this.user.name.length > 10) {
         this.$message({
           message: "请填写真实姓名",
           type: "error",
         });
         return false;
       }
-      if (user.idCardNo.length != 18) {
+      if (this.user.idCardNo.length != 18) {
         this.$message({
           message: "请填写真实身份证号",
           type: "error",
         });
         return false;
       }
-      if (user.idCardPic.length == 0) {
+      if (this.user.idCardPic.length == 0) {
         this.$message({
           message: "请上传身份证人物面照片",
           type: "error",
@@ -338,26 +336,54 @@ export default {
         idCardNo: this.user.idCardNo,
         idCardPic: this.user.idCardPic,
       };
-      await this.$http.put("UserExtend/UpdateIdCard", req);
-      return true;
+      var res = await this.$http.put("UserExtend/UpdateIdCard", req);
+      return res ? true : false;
     },
     async updateCompany() {
-      await this.$http.put(
+      if (this.user.companyName.length == 0) {
+        this.$message({
+          message: "请填写公司名称",
+          type: "error",
+        });
+        return false;
+      }
+      if (this.user.companyPic.length == 0) {
+        this.$message({
+          message: "请上传在职证明",
+          type: "error",
+        });
+        return false;
+      }
+      var res = await this.$http.put(
         "UserExtend/UpdateCompany?companyName=" +
           this.user.companyName +
           "&companyPic=" +
           this.user.companyPic
       );
-      return true;
+      return res ? true : false;
     },
     async updateEducation() {
+      if (this.user.xhwCode.length == 0) {
+        this.$message({
+          message: "请填写学信网验证码",
+          type: "error",
+        });
+        return false;
+      }
+      if (this.user.schoolName.length == 0) {
+        this.$message({
+          message: "请填写学校名称",
+          type: "error",
+        });
+        return false;
+      }
       var req = {
         XHWCode: this.user.xhwCode,
         SchoolName: this.user.schoolName,
         Education: this.user.education,
       };
-      await this.$http.put("UserExtend/UpdateEducation", req);
-      return true;
+      var res = await this.$http.put("UserExtend/UpdateEducation", req);
+      return res ? true : false;
     },
     uploadCompanyPicSuccess(res, file) {
       this.user.companyPic = res.data;

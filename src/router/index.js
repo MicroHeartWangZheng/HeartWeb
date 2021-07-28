@@ -14,13 +14,14 @@ import Setting from '../views/Setting.vue'
 import OrderList from '../views/OrderList.vue'
 import MomentList from '../views/MomentList.vue'
 import SetpOne from '../views/SetpOne.vue'
+import UpdatePictures from '../views/UpdatePictures.vue'
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [{
       path: '/',
-      redirect: '/vip'
+      redirect: '/login'
     },
     {
       path: '/login',
@@ -77,6 +78,10 @@ const router = new VueRouter({
         {
           path: '/SetpOne',
           component: SetpOne
+        },
+        {
+          path: '/UpdatePictures',
+          component: UpdatePictures
         }
       ]
     },
@@ -85,19 +90,19 @@ const router = new VueRouter({
 
 
 const VueRouterPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (to) {
+VueRouter.prototype.push = function push(to) {
   return VueRouterPush.call(this, to).catch(err => err)
-  }
+}
 
 //导航守卫 
 router.beforeEach((to, from, next) => {
-  // //to 将要访问的路径
-  // //from 来源路径
-  // //next 是一个函数 
-  // if (to.path === '/login') return next();
-  // const token = window.sessionStorage.getItem('token');
+  //to 将要访问的路径
+  //from 来源路径
+  //next 是一个函数 
+  if (to.path === '/login') return next();
+  const token = window.sessionStorage.getItem('token');
 
-  // if (!token) return next('/login');
+  if (!token) return next('/login');
   next();
 });
 
