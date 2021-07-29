@@ -17,7 +17,7 @@
           <div :class="user.idCardState==4?'red':''">
             <span class="fa fa-id-card fa-3x"></span>
             <span class="tagTitle">身份认证</span>
-            <span class="tagValue">已认证</span>
+            <span class="tagValue">{{user.idCardState=='4'?'已认证':'未认证'}}</span>
           </div>
           <div :class="user.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
