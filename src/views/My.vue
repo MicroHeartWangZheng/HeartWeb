@@ -60,7 +60,7 @@
     <div class="descContainer">
       <div class="title">
         <span>关于我</span>
-        <el-link class="redirect" type="danger" :underline="false">修改</el-link>
+        <el-link class="redirect" :type="editDesc?'success':'danger'" :underline="false" @click="edit">{{editDesc?"完成":"修改"}}</el-link>
       </div>
       <div class="desc">
         <div class="descItem">
@@ -69,7 +69,8 @@
             <span>自我介绍</span>
           </div>
           <div class="descContent">
-            <el-input type="textarea" placeholder="请输入内容" v-model="introduction.myIntroduce"  autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+            <div v-if="!editDesc">{{introduction.myIntroduce}}</div>
+            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.myIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
         <div class="descItem">
@@ -77,14 +78,20 @@
             <span class="fa fa-circle fa-1x"></span>
             <span>家庭背景</span>
           </div>
-          <div class="descContent">{{introduction.homeIntroduce}}</div>
+          <div class="descContent">
+            <div v-if="!editDesc">{{introduction.homeIntroduce}}</div>
+            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.homeIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+          </div>
         </div>
         <div class="descItem">
           <div class="descTitle">
             <span class="fa fa-circle fa-1x"></span>
             <span>理想另一半</span>
           </div>
-          <div class="descContent">{{introduction.halfIntroduce}}</div>
+          <div class="descContent">
+            <div v-if="!editDesc">{{introduction.halfIntroduce}}</div>
+            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.halfIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+          </div>
         </div>
       </div>
     </div>
@@ -97,6 +104,7 @@ export default {
   data() {
     return {
       user: {},
+      editDesc: false,
       introduction: {
         myIntroduce: "",
         homeIntroduce: "",
@@ -120,6 +128,20 @@ export default {
     },
     async follow() {
       this.$message.error("不能关注自己");
+    },
+    //点击编辑
+    async edit() {
+      this.editDesc = !this.editDesc;
+      if (this.editDesc == false) {
+        var req = {
+          Introduction: JSON.stringify(this.introduction),
+        };
+        console.log("提交介绍", req);
+        var res = await this.$http.put(
+          "UserExtend/UpdateIntroduction",
+          req
+        );
+      }
     },
   },
   mounted() {
@@ -304,9 +326,9 @@ export default {
   }
 }
 
-/deep/ .descContent .el-textarea .el-textarea__inner {
-  border: none;
-  font-size: 14px;
-  color: #000;
-}
+// /deep/ .descContent .el-textarea .el-textarea__inner {
+//   border: none;
+//   font-size: 14px;
+//   color: #000;
+// }
 </style>
