@@ -5,30 +5,32 @@
         <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
       </span>
     </div>
-    <div class="usersContainer">
-      <div class="userItemContainer" @click="redict('/userdetail/' + user.id)" v-for="(user, index) in users" :key="index">
-        <el-image :src="user.headPic" fit="cover"></el-image>
-        <div class="userInfoContainer">
-          <div class="nickInfo">
-            <div>{{ user.nickName }} ·</div>
-            <div>已认证</div>
-            <div>
-              <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+    <el-row :gutter="20">
+      <el-col :span="6" v-for="user in users" :key="user.id">
+        <div class="userItemContainer">
+          <el-image :src="user.headPic" fit="cover" @click="redict('/userdetail/'+user.id)"></el-image>
+          <div class="userInfoContainer">
+            <div class="nickInfo">
+              <div>{{user.nickName}} ·</div>
+              <div>已认证</div>
+              <div>
+                <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+              </div>
+            </div>
+            <div class="positionInfo">
+              <div>现居{{user.homeCity}} ·</div>
+              <div>{{user.currentCity}}人</div>
+            </div>
+            <div class="baseInfo" style="color:#666666">
+              <div>{{user.year}}年 · </div>
+              <div>{{user.height}}cm · </div>
+              <div>{{user.educationDesc}} · </div>
+              <div>{{user.career}}</div>
             </div>
           </div>
-          <div class="positionInfo" style="font-size:12px">
-            <div>现居{{ user.homeCity }} ·</div>
-            <div>{{ user.currentCity }}人</div>
-          </div>
-          <div class="baseInfo" style="color:#909399;font-size:10px">
-            <div>{{ user.year }}年 ·</div>
-            <div>{{ user.height }}cm ·</div>
-            <div>{{ user.educationDesc }} ·</div>
-            <div>{{ user.career }}</div>
-          </div>
         </div>
-      </div>
-    </div>
+      </el-col>
+    </el-row>
     <div>
       <el-pagination background :page-size="queryInfo.pageIndex" :page-count="queryInfo.pageSize" layout="prev, pager, next" :total="totalCount / queryInfo.pageSize">
       </el-pagination>
@@ -52,7 +54,7 @@ export default {
       const res = await this.$http.get("User/GetList", {
         params: this.queryInfo,
       });
-      console.log("resGetList", res);
+
       this.users = res.data.items;
       this.totalCount = res.data.total;
     },
@@ -99,55 +101,50 @@ export default {
     font-weight: 700;
   }
 }
-.usersContainer {
-  display: flex;
-  justify-content: space-between;
-  align-content: space-between;
-  flex-wrap: wrap;
-  .userItemContainer {
-    width: 210px;
-    background-color: #ffffff;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-    .el-image {
+
+.userItemContainer {
+  width: 210px;
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  .el-image {
+    width: 100%;
+    height: 264px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 6px;
+  }
+  .userInfoContainer {
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: Tahoma, Arial, Helvetica, "Microsoft YaHei New",
+      "Microsoft Yahei", sans-serif;
+    color: #292929;
+    .nickInfo {
+      display: flex;
       width: 100%;
-      height: 264px;
-      border-radius: 10px 10px 0 0;
-      margin-bottom: 6px;
-    }
-    .userInfoContainer {
-      height: 70px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-size: 12px;
-      font-family: Tahoma, Arial, Helvetica, "Microsoft YaHei New",
-        "Microsoft Yahei", sans-serif;
-      color: #292929;
-      .nickInfo {
-        display: flex;
-        width: 100%;
-        height: 20px;
-        font-size: 14px;
-        font-weight: 700;
-        color: black;
-        line-height: 22px;
-        div {
-          margin-right: 6px;
-        }
-        .el-image {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
-    .positionInfo,
-    .baseInfo {
-      display: flex;
+      height: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: black;
+      line-height: 22px;
       div {
         margin-right: 6px;
       }
+      .el-image {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+  .positionInfo,
+  .baseInfo {
+    display: flex;
+    div {
+      margin-right: 6px;
     }
   }
 }

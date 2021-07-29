@@ -1,35 +1,35 @@
 <template>
   <div class="page">
     <div class="baseInfoContainer">
-      <el-image fit="cover" :src="userDetail.headPic" alt=""></el-image>
+      <el-image fit="cover" :src="user.headPic" alt=""></el-image>
       <div class="rightContainer">
-        <div class="nickContainer">{{userDetail.nickName}}</div>
+        <div class="nickContainer">{{user.nickName}}</div>
         <div class="centenContainer">
-          <div>{{userDetail.year}}年 - </div>
-          <div>{{userDetail.height}}cm - </div>
-          <div>{{userDetail.weight}}kg - </div>
-          <div>{{userDetail.educationDesc}} - </div>
-          <div>{{userDetail.homeCity}}人 - </div>
-          <div>现居{{userDetail.currentCity}} - </div>
-          <div>{{userDetail.career}}</div>
+          <div>{{user.year}}年 - </div>
+          <div>{{user.height}}cm - </div>
+          <div>{{user.weight}}kg - </div>
+          <div>{{user.educationDesc}} - </div>
+          <div>{{user.homeCity}}人 - </div>
+          <div>现居{{user.currentCity}} - </div>
+          <div>{{user.career}}</div>
         </div>
         <div class="tagContainer">
-          <div :class="userDetail.idCardState==4?'red':''">
+          <div :class="user.idCardState==4?'red':''">
             <span class="fa fa-id-card fa-3x"></span>
             <span class="tagTitle">身份认证</span>
             <span class="tagValue">已认证</span>
           </div>
-          <div :class="userDetail.educationState==4?'red':''">
+          <div :class="user.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
             <span class="tagTitle">学历认证</span>
-            <span v-if="setting.HideSchool" class="tagValue">{{userDetail.schoolName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{userDetail.schoolName}}</span>
+            <span v-if="setting.HideSchool" class="tagValue">{{user.schoolName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{user.schoolName}}</span>
           </div>
-          <div :class="userDetail.companyState==4?'red':''">
+          <div :class="user.companyState==4?'red':''">
             <span class="fa fa-tv fa-3x"></span>
             <span class="tagTitle">工作认证</span>
-            <span v-if="setting.HideCompany" class="tagValue">{{userDetail.companyName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{userDetail.companyName}}</span>
+            <span v-if="setting.HideCompany" class="tagValue">{{user.companyName}}(已隐藏)</span>
+            <span v-else class="tagValue">{{user.companyName}}</span>
           </div>
         </div>
         <div class="wantContainer">
@@ -49,9 +49,11 @@
         <span>生活照片</span>
       </div>
 
-      <div class="pics">
-        <el-image fit="cover" v-for="(pic,index) in userDetail.pictures" :src="pic" :preview-src-list="userDetail.pictures" :key="index"></el-image>
-      </div>
+      <el-row :gutter="20" class="pics" style="margin:0px;">
+        <el-col :span="6" v-for="(pic,index) in user.pictures" :key="index">
+          <el-image fit="cover" :src="pic" :preview-src-list="user.pictures"></el-image>
+        </el-col>
+      </el-row>
     </div>
     <div class="descContainer">
       <div class="title">
@@ -91,25 +93,25 @@
 export default {
   data() {
     return {
-      userDetail: {},
+      user: {},
       introduction: {
         myIntroduce: "",
         homeIntroduce: "",
         halfIntroduce: "",
       },
-     setting: {},
+      setting: {},
     };
   },
   methods: {
     async getDetail() {
-      var userId=this.$route.params.id;
-      const res = await this.$http.get("User/"+userId);
-      this.userDetail = res.data;
+      var userId = this.$route.params.id;
+      const res = await this.$http.get("User/" + userId);
+      this.user = res.data;
       this.introduction = JSON.parse(res.data.introduction);
       this.setting = JSON.parse(res.data.setting);
     },
     async want() {
-      const res = await this.$http.post("Want/" + this.userDetail.id);
+      const res = await this.$http.post("Want/" + this.user.id);
       console.log("sendWant", res);
       if (res) {
         this.$message({
@@ -119,7 +121,7 @@ export default {
       }
     },
     async follow() {
-      const res = await this.$http.post("Follow/" + this.userDetail.id);
+      const res = await this.$http.post("Follow/" + this.user.id);
       console.log("sendFollow", res);
       if (res) {
         this.$message({
@@ -227,17 +229,12 @@ export default {
     }
   }
 }
-
 .picsContainer {
   margin-top: 30px;
   .pics {
-    padding: 12px 12px 0 12px;
+    padding-top: 12px;
     border-radius: 10px;
     background-color: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: flex-start;
     .el-image {
       width: 230px;
       height: 280px;
