@@ -7,15 +7,10 @@
       <div class="userInfo">
         <div>
           <span class="fa fa-user-o fa-3x" style="color: #ff6666"></span>
-          <span style="margin-left: 30px; font-size: 700"
-            >当前为：免费用户</span
-          >
+          <span style="margin-left: 30px; font-size: 700">当前为：免费用户</span>
         </div>
         <div>
-          <el-image
-            :src="require('../assets/金币.png')"
-            fit="contain"
-          ></el-image>
+          <el-image :src="require('../assets/金币.png')" fit="contain"></el-image>
           <el-link @click="redirect('/orderlist')" type="danger" style="margin-left: 30px">充值记录>></el-link>
         </div>
       </div>
@@ -77,58 +72,71 @@
         </table>
       </div>
       <div class="goodsContainer">
-        <div
-          :class="selectedIndex === 1 ? 'goodsItem redBorder' : 'goodsItem'"
-          @click="chooseGoods(1)"
-        >
-          <div class="title">月卡</div>
-          <div class="unitPrice">￥1.3/天</div>
-          <div class="lineTitle">￥49</div>
-          <div class="price">￥39</div>
-          <div :class="selectedIndex === 1 ? 'selectedIcon' : 'close'"></div>
-          <div class="discount">8折</div>
-        </div>
-        <div
-          :class="selectedIndex === 2 ? 'goodsItem redBorder' : 'goodsItem'"
-          @click="chooseGoods(2)"
-        >
-          <div class="title">季卡</div>
-          <div class="unitPrice">￥1.1/天</div>
-          <div class="lineTitle">￥147</div>
-          <div class="price">￥99</div>
-          <div :class="selectedIndex === 2 ? 'selectedIcon' : 'close'"></div>
-          <div class="discount">6.7折</div>
-        </div>
-        <div
-          :class="selectedIndex === 3 ? 'goodsItem redBorder' : 'goodsItem'"
-          @click="chooseGoods(3)"
-        >
-          <div class="title">年卡</div>
-          <div class="unitPrice">￥1/天</div>
-          <div class="lineTitle">￥588</div>
-          <div class="price">￥365</div>
-          <div :class="selectedIndex === 3 ? 'selectedIcon' : 'close'"></div>
-          <div class="discount">6.2折</div>
+        <div :class="index==selectedIndex?'goodsItem redBorder':'goodsItem'" v-for="(goods,index) in goodsList" :key="index" @click="chooseGoods(index)">
+          <div class="title">{{goods.name}}</div>
+          <div class="unitPrice">￥{{goods.avgPrice}}/天</div>
+          <div class="lineTitle">￥{{goods.linePrice}}</div>
+          <div class="price">￥{{goods.payPrice}}</div>
+          <div :class="index==selectedIndex ? 'selectedIcon' : 'close'"></div>
+          <div class="discount">{{goods.discount}}折</div>
         </div>
       </div>
-      <div class="buyButton">购买</div>
+      <div class="buyButton" @click="buy">购买</div>
+ 
+      <el-dialog :visible.sync="qrCodeDialog.visiable" :center="true" title="微信扫码支付" width="400px" top="15%" height="400px">
+       <div style="margin:auto;width:120px;height:120px;padding:10px;" id="qrcode" ref="qrcode"></div>
+      </el-dialog>
+
     </div>
   </div>
 </template>
 <script>
+import QRCode from "qrcodejs2";
 export default {
   data() {
     return {
-      selectedIndex: 2,
+      selectedIndex: 1,
+
+      goodsList: [],
+      qrCodeDialog: {
+        visiable: false,
+      },
     };
   },
   methods: {
+    async getGoods() {
+      var res = await this.$http.get("Goods");
+      this.goodsList = res.data;
+
+      console.log("goodsList", this.goodsList);
+    },
     redirect(path) {
       this.$router.push(path);
     },
     chooseGoods(index) {
       this.selectedIndex = index;
     },
+    async buy() {
+      this.qrCodeDialog.visiable = true;
+      var goods = this.goodsList[this.selectedIndex];
+      var res = await this.$http.get(
+        "Order/PreOrder?goodsId=" + goods.id + "&weChatPay=1"
+      );
+      this.creatQrCode(res.data.codeUrl);
+    },
+    creatQrCode(qrCodeUrl) {
+      //先清除，后增加
+      document.getElementById("qrcode").innerHTML = "";
+      var qrcode = new QRCode("qrcode", {
+        text: qrCodeUrl, // 需要转换为二维码的内容
+        width: 100,
+        height: 100,
+        image: "",
+      });
+    },
+  },
+  mounted() {
+    this.getGoods();
   },
 };
 </script>

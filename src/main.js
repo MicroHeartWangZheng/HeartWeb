@@ -6,10 +6,7 @@ import './plugins/element.js'
 import './assets/css/global.css'
 import './assets/css/normalize.css'
 import 'font-awesome/css/font-awesome.min.css';
-import {
-  Message
-} from 'element-ui';
-
+import {Message} from 'element-ui';
 
 import axios from 'axios'
 // 远程后台地址

@@ -11,7 +11,7 @@
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="fa fa-id-card" command="/my">我的主页</el-dropdown-item>
-               <el-dropdown-item icon="fa fa-id-card" command="/SetpOne">修改资料</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-id-card" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-eye" command="/followlist">关注列表</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">会员与金币</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
@@ -19,7 +19,7 @@
           </el-dropdown>
         </div>
         <div>
-          <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+          <el-avatar :src="user.headPic"></el-avatar>
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="bottomContainer">
-      <span>© 2021 月老科技 版权所有</span>
+      <span>© 2021 杭州月老科技 版权所有</span>
       <span>网站备案/许可证号：浙ICP备2021006379号-1</span>
     </div>
   </div>
@@ -37,13 +37,25 @@
 
 <script>
 export default {
+  data() {
+    return {
+      user: {},
+    };
+  },
   methods: {
+    async getDetail() {
+      const res = await this.$http.get("User");
+      this.user = res.data;
+    },
     redirect(path) {
       this.$router.push(path);
     },
     handleCommand(path) {
       this.$router.push(path);
     },
+  },
+   mounted() {
+    this.getDetail();
   },
 };
 </script>
