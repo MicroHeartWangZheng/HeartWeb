@@ -5,36 +5,41 @@
         <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
       </span>
     </div>
-    <el-row :gutter="20">
-      <el-col :span="6" v-for="user in users" :key="user.id">
-        <div class="userItemContainer">
-          <el-image :src="user.headPic" fit="cover" @click="redict('/userdetail/'+user.id)"></el-image>
-          <div class="userInfoContainer">
-            <div class="nickInfo">
-              <div>{{user.nickName}} ·</div>
-              <div>已认证</div>
-              <div>
-                <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+    <div class="content">
+      <div>
+        <el-row :gutter="20">
+          <el-col :span="6" v-for="user in users" :key="user.id">
+            <div class="userItemContainer">
+              <el-image :src="user.headPic" fit="cover" @click="redict('/userdetail/'+user.id)"></el-image>
+              <div class="userInfoContainer">
+                <div class="nickInfo">
+                  <div>{{user.nickName}} ·</div>
+                  <div>已认证</div>
+                  <div>
+                    <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+                  </div>
+                </div>
+                <div class="positionInfo">
+                  <div>现居{{user.homeCity}} ·</div>
+                  <div>{{user.currentCity}}人</div>
+                </div>
+                <div class="baseInfo" style="color:#666666">
+                  <div>{{user.year}}年 · </div>
+                  <div>{{user.height}}cm · </div>
+                  <div>{{user.educationDesc}} · </div>
+                  <div>{{user.career}}</div>
+                </div>
               </div>
             </div>
-            <div class="positionInfo">
-              <div>现居{{user.homeCity}} ·</div>
-              <div>{{user.currentCity}}人</div>
-            </div>
-            <div class="baseInfo" style="color:#666666">
-              <div>{{user.year}}年 · </div>
-              <div>{{user.height}}cm · </div>
-              <div>{{user.educationDesc}} · </div>
-              <div>{{user.career}}</div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <div>
-      <el-pagination background :page-size="queryInfo.pageIndex" :page-count="queryInfo.pageSize" layout="prev, pager, next" :total="totalCount / queryInfo.pageSize">
-      </el-pagination>
+          </el-col>
+        </el-row>
+      </div>
+      <div>
+        <el-pagination background @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
+        </el-pagination>
+      </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -57,6 +62,10 @@ export default {
 
       this.users = res.data.items;
       this.totalCount = res.data.total;
+    },
+    async currentIndexChange(index) {
+      this.queryInfo.pageIndex = index;
+      await this.getFollowList();
     },
     redict(path) {
       this.$router.push(path);
@@ -101,7 +110,12 @@ export default {
     font-weight: 700;
   }
 }
-
+.content {
+  height: 1200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .userItemContainer {
   width: 210px;
   background-color: #ffffff;

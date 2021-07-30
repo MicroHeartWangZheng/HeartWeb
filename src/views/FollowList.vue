@@ -3,38 +3,41 @@
     <div class="titleContainer">
       <span>我关注的人</span>
     </div>
-    <el-row :gutter="20">
-      <el-col :span="6" v-for="followUser in followUsers" :key="followUser.id">
-        <div class="userItemContainer">
-          <div class="delete" @click="clickRemove(followUser.id)"><span class="fa fa-times"></span></div>
-          <el-image :src="followUser.headPic" fit="cover" @click="redict('/userdetail/'+followUser.followUserId)"></el-image>
-          <div class="userInfoContainer">
-            <div class="nickInfo">
-              <div>{{followUser.nickName}} ·</div>
-              <div>已认证</div>
-              <div>
-                <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+    <div class="content">
+      <el-row :gutter="20">
+        <el-col :span="6" v-for="followUser in followUsers" :key="followUser.id">
+          <div class="userItemContainer">
+            <div class="delete" @click="clickRemove(followUser.id)"><span class="fa fa-times"></span></div>
+            <el-image :src="followUser.headPic" fit="cover" @click="redict('/userdetail/'+followUser.followUserId)"></el-image>
+            <div class="userInfoContainer">
+              <div class="nickInfo">
+                <div>{{followUser.nickName}} ·</div>
+                <div>已认证</div>
+                <div>
+                  <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
+                </div>
+              </div>
+              <div class="positionInfo">
+                <div>现居{{followUser.homeCity}} ·</div>
+                <div>{{followUser.currentCity}}人</div>
+              </div>
+              <div class="baseInfo" style="color:#666666">
+                <div>{{followUser.year}}年 · </div>
+                <div>{{followUser.height}}cm · </div>
+                <div>{{followUser.educationDesc}} · </div>
+                <div>{{followUser.career}}</div>
               </div>
             </div>
-            <div class="positionInfo">
-              <div>现居{{followUser.homeCity}} ·</div>
-              <div>{{followUser.currentCity}}人</div>
-            </div>
-            <div class="baseInfo" style="color:#666666">
-              <div>{{followUser.year}}年 · </div>
-              <div>{{followUser.height}}cm · </div>
-              <div>{{followUser.educationDesc}} · </div>
-              <div>{{followUser.career}}</div>
-            </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
 
-    <div>
-      <el-pagination background :page-size="search.pageIndex" :pager-count="7" layout="prev, pager, next" :total="search.totalCount/search.pageSize">
-      </el-pagination>
+      <div>
+        <el-pagination background @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
+        </el-pagination>
+      </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -42,20 +45,20 @@ export default {
   data() {
     return {
       followUsers: [],
-      search: {
+      queryInfo: {
         pageIndex: 1,
-        pageSize: 20,
-        totalCount: 101,
+        pageSize: 8,
       },
+      totalCount: 0,
     };
   },
   methods: {
     async getFollowList() {
       var res = await this.$http.get("Follow", {
-        params: this.search,
+        params: this.queryInfo,
       });
       this.followUsers = res.data.items;
-      this.search.totalCount = res.data.total;
+      this.totalCount = res.data.total;
     },
     async remove(id) {
       var res = await this.$http.delete("Follow/" + id);
@@ -67,7 +70,8 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(() => {
+      })
+        .then(() => {
           var res = this.remove(id);
           if (res) {
             this.$message({
@@ -87,6 +91,10 @@ export default {
             message: "已取消操作",
           });
         });
+    },
+    async currentIndexChange(index) {
+      this.queryInfo.pageIndex = index;
+      await this.getFollowList();
     },
     redict(path) {
       this.$router.push(path);
@@ -125,6 +133,12 @@ export default {
   span:after {
     right: 0%;
   }
+}
+.content {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .userItemContainer {

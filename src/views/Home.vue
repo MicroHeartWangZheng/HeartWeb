@@ -11,10 +11,11 @@
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="fa fa-id-card" command="/my">我的主页</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-id-card" command="/SetpOne">修改资料</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-eye" command="/followlist">关注列表</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">会员与金币</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-sign-out" command="signOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -50,11 +51,23 @@ export default {
     redirect(path) {
       this.$router.push(path);
     },
-    handleCommand(path) {
-      this.$router.push(path);
+    async handleCommand(path) {
+      if (path !== "signOut") {
+        this.$router.push(path);
+        return;
+      }
+      await this.destoryToken();
+      window.sessionStorage.removeItem("token");
+      this.redirect("/login");
+    },
+    //销毁Token
+    async destoryToken() {
+      var token = window.sessionStorage.getItem("token");
+      var res = await this.$http.get("Token/Destory/" + token);
+      return res ? true : false;
     },
   },
-   mounted() {
+  mounted() {
     this.getDetail();
   },
 };

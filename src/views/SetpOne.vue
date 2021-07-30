@@ -67,14 +67,14 @@
 
           <div class="row">
             <div class="title">出生地<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
-            <el-cascader class="right" :disabled="user.idCardState==4?true:false" :value="[user.currentProvince,user.currentCity]" :options="regions" @change="chooseHome">
+            <el-cascader class="right" :disabled="user.idCardState==4?true:false" :value="[user.homeProvince,user.homeCity]" :options="regions" @change="chooseHome">
             </el-cascader>
           </div>
           <el-divider></el-divider>
 
           <div class="row">
             <div class="title">现居地</div>
-            <el-cascader class="right" :value="[user.homeProvince,user.homeCity]" :options="regions" @change="chooseCurrent">
+            <el-cascader class="right" :value="[user.currentProvince,user.currentCity]" :options="regions" @change="chooseCurrent">
             </el-cascader>
           </div>
           <el-divider></el-divider>

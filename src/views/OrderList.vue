@@ -14,7 +14,7 @@
       </div>
 
       <div>
-        <el-pagination @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
+        <el-pagination background @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
         </el-pagination>
       </div>
     </div>
