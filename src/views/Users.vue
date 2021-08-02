@@ -1,20 +1,61 @@
 <template>
   <div class="page">
-    <div class="titleContainer">
+    <div v-if="!user.vip" class="titleContainer">
       <span>非VIP仅看部分用户
-        <el-link class="vipSearchBtn" type="danger" :underline="false">VIP搜索全部</el-link>
+        <el-link class="vipSearchBtn" type="danger" :underline="false" @click="vipSearch">VIP搜索全部</el-link>
       </span>
+    </div>
+    <div class="searchContainer" v-else>
+      <el-row :gutter="20">
+        <el-col :span="4">
+          <el-select clearable v-model="queryInfo.startYear" placeholder="开始年份">
+            <el-option v-for="year in years" :key="year" :label="year" :value="year"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-select clearable v-model="queryInfo.endYear" placeholder="结束年份">
+            <el-option v-for="year in years" :key="year" :label="year" :value="year"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-select clearable v-model="queryInfo.heightMin" placeholder="最低身高">
+            <el-option v-for="heightOption in heightOptions" :key="heightOption.value" :label="heightOption.label" :value="heightOption.value"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-select clearable v-model="queryInfo.heightMax" placeholder="最高身高">
+            <el-option v-for="heightOption in heightOptions" :key="heightOption.value" :label="heightOption.label" :value="heightOption.value"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-cascader :props="{ checkStrictly: true }" :value="[queryInfo.homeProvince,queryInfo.homeCity]" :options="regions" placeholder="出生地" @change="chooseHome"> </el-cascader>
+        </el-col>
+        <el-col :span="4">
+          <el-cascader :props="{ checkStrictly: true }" :value="[queryInfo.currentProvince,queryInfo.currentCity]" :options="regions" placeholder="所在地" @change="chooseCurrent"></el-cascader>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20">
+        <el-col :span="4">
+          <el-select v-model="queryInfo.education" placeholder="学历">
+            <el-option v-for="(value,key) in educationTypes" :key="key" :label="value" :value="key*1"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="danger" icon="el-icon-search" @click="vipSearch">搜索</el-button>
+        </el-col>
+      </el-row>
     </div>
     <div class="content">
       <div>
         <el-row :gutter="20">
           <el-col :span="6" v-for="user in users" :key="user.id">
-            <div class="userItemContainer">
+            <div class="userItemContainer pointer">
               <el-image :src="user.headPic" fit="cover" @click="redict('/userdetail/'+user.id)"></el-image>
               <div class="userInfoContainer">
                 <div class="nickInfo">
-                  <div>{{user.nickName}} ·</div>
-                  <div>已认证</div>
+                  <div>{{user.nickName.length>10?user.nickName.slice(0,7)+'...':user.nickName}}</div>
+                  <div>· 已认证</div>
                   <div>
                     <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
                   </div>
@@ -26,7 +67,6 @@
                 <div class="baseInfo" style="color:#666666">
                   <div>{{user.year}}年 · </div>
                   <div>{{user.height}}cm · </div>
-                  <div>{{user.educationDesc}} · </div>
                   <div>{{user.career}}</div>
                 </div>
               </div>
@@ -43,36 +83,116 @@
   </div>
 </template>
 <script>
+import config from "/src/common/config.js";
 export default {
   data() {
     return {
-      queryInfo: {
-        pageIndex: 1,
-        pageSize: 20,
-      },
       users: [],
+      user: {},
+      queryInfo: {
+        startYear: null,
+        endYear: null,
+        heightMin: null,
+        heightMax: null,
+        homeProvince: null,
+        homeCity: null,
+        currentProvince: null,
+        currentCity: null,
+        education: null,
+        pageIndex: 1,
+        pageSize: 16,
+      },
+      years: [], //出身年份
+      heightOptions: [], //身高
+      regions: [], //地区
+      educationTypes: config.educationTypes,
       totalCount: 0,
     };
   },
   methods: {
-    async getList() {
-      const res = await this.$http.get("User/GetList", {
-        params: this.queryInfo,
-      });
-
+    async getUser() {
+      const res = await this.$http.get("User");
+      this.user = res.data;
+    },
+    async getUserList() {
+      var url = this.user.vip ? "User/GetListForVIP" : "User/GetList";
+      console.log("vip", this.user.vip);
+      console.log("url", url);
+      const res = await this.$http.get(url, { params: this.queryInfo });
       this.users = res.data.items;
       this.totalCount = res.data.total;
     },
+    //vip搜索
+    vipSearch() {
+      //VIP搜索
+      if (this.user.vip) {
+        this.getUserList();
+        return;
+      }
+      //非VIP 跳转
+      this.$message({
+        message: "搜索功能为会员特有功能，请先开通会员。",
+      });
+      setTimeout(() => {
+        this.$router.push("/vip");
+      }, 1500);
+    },
+    //点击页码
     async currentIndexChange(index) {
       this.queryInfo.pageIndex = index;
-      await this.getFollowList();
+      await this.getUserList();
     },
+    //查询出身地
+    chooseHome(region) {
+      this.queryInfo.homeProvince = region[0];
+      this.queryInfo.homeCity = region[1];
+    },
+    //查询当前位置
+    chooseCurrent(region) {
+      this.queryInfo.currentProvince = region[0];
+      this.queryInfo.currentCity = region[1];
+    },
+    //初始化年份
+    initYear() {
+      var that = this;
+      for (var i = 1980; i < 2021; i++) {
+        that.years.push(i);
+      }
+    },
+    //初始化身高
+    initHeightOptions() {
+      var that = this;
+      for (var i = 150; i < 200; i++) {
+        that.heightOptions.push({ value: i, label: i + "cm" });
+      }
+    },
+    //初始化地区
+    async initRegion() {
+      const regions = await this.$http.get("Region");
+      regions.data.forEach((region) => {
+        const children = [];
+        region.childrens.forEach((child) => {
+          children.push({ value: child.name, label: child.name });
+        });
+        this.regions.push({
+          value: region.name,
+          label: region.name,
+          children: children,
+        });
+      });
+    },
+    //统一跳转页面
     redict(path) {
       this.$router.push(path);
     },
   },
   created() {
-    this.getList();
+    this.initHeightOptions();
+    this.initRegion();
+    this.initYear();
+    this.getUser().then(() => {
+      this.getUserList();
+    });
   },
 };
 </script>
@@ -80,6 +200,19 @@ export default {
 .page {
   width: 100%;
   padding-top: 30px;
+}
+
+.searchContainer {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 .titleContainer {
   display: flex;
@@ -111,7 +244,6 @@ export default {
   }
 }
 .content {
-  height: 1200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

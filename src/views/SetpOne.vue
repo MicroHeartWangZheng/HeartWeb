@@ -33,7 +33,7 @@
 
           <div class="row">
             <div class="title">出生日期<span style="color:#b5b4b4;font-size:12px;">（认证后不能修改）</span></div>
-            <el-date-picker class="right" :disabled="user.idCardState==4?true:false" v-model="user.birthDate" value-format="yyyy-MM-dd" :clearable="false" type="date" placeholder="选择日期">
+            <el-date-picker class="right" :disabled="user.idCardState==4?true:false" v-model="user.birthDate" :default-value="'1990-01-01'" value-format="yyyy-MM-dd" :clearable="false" type="date" placeholder="选择日期">
             </el-date-picker>
           </div>
           <el-divider></el-divider>
@@ -95,8 +95,7 @@
         <div class="stepTwo" v-if="currentStep==1">
           <div class="stepTwoContent">
             <div class="picItem pointer" v-for="(pic,index) in pictures" :key="index">
-              <el-image :src="pic" fit="cover" style="width: 100%; height: 100%" :preview-src-list="pictures">
-              </el-image>
+              <el-image :src="pic" fit="cover" style="width: 100%; height: 100%" :preview-src-list="pictures"> </el-image>
               <div class="bottom">
                 <div v-if="headPicIndex!==index" @click="setHeadPic(index)">设为封面</div>
                 <div v-else>封面</div>
@@ -194,7 +193,7 @@
             <div class="authContent">
               <div class="row">
                 <div class="title">微信号<span style="color:#b5b4b4;font-size:12px;">(用于申请通过后联系)</span></div>
-                <el-input class="right" placeholder="用于" v-model="user.weChatId" :maxlength="20"></el-input>
+                <el-input class="right" v-model="user.weChatId" :maxlength="20"></el-input>
               </div>
               <el-divider></el-divider>
             </div>
@@ -224,7 +223,7 @@ export default {
       title: "基本资料",
       desc: "以下资料都是必填项。你想多了解一些未来的Ta，Ta也一样 ^_^",
       user: {},
-      pictures: [],
+      pictures: [], //所有的图片
       headPicIndex: 0,
       pictureDialog: {
         visible: false,
@@ -271,12 +270,13 @@ export default {
       this.user.pictures.forEach((item, index, arr) => {
         this.pictures.unshift(item);
       });
-      this.pictures.unshift(this.user.headPic);
+      if (this.user.headPic) this.pictures.unshift(this.user.headPic);
     },
     async submit() {
       var result = await this.updateIdCard();
       if (result) result = await this.updateCompany();
       if (result) result = await this.updateEducation();
+      if (result) result = await this.updateWeChatId();
       if (result) this.redirect("My/");
     },
     setHeadPic(headPicIndex) {
@@ -302,9 +302,11 @@ export default {
       return res ? true : false;
     },
     async updatePictures() {
-      this.pictures.splice(this.headPicIndex, 1);
+      var tempPicsStr = JSON.stringify(this.pictures);
+      var tempPics = JSON.parse(tempPicsStr);
+      tempPics.splice(this.headPicIndex, 1);
       var req = {
-        Pictures: this.pictures,
+        Pictures: tempPics,
       };
       await this.$http.put("UserExtend/UpdatePictures", req);
     },
@@ -383,6 +385,19 @@ export default {
         Education: this.user.education,
       };
       var res = await this.$http.put("UserExtend/UpdateEducation", req);
+      return res ? true : false;
+    },
+    async updateWeChatId() {
+      if (this.user.weChatId.length == 0) {
+        this.$message({
+          message: "请填写微信号，确保对方能联系到您",
+          type: "error",
+        });
+        return false;
+      }
+      var res = await this.$http.put(
+        "UserExtend/UpdateWeChatId?wechatId=" + this.user.weChatId
+      );
       return res ? true : false;
     },
     uploadCompanyPicSuccess(res, file) {

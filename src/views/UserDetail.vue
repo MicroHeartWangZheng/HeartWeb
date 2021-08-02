@@ -22,14 +22,16 @@
           <div :class="user.educationState==4?'red':''">
             <span class="fa fa-graduation-cap fa-3x"></span>
             <span class="tagTitle">学历认证</span>
-            <span v-if="setting.HideSchool" class="tagValue">{{user.schoolName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{user.schoolName}}</span>
+            <span v-if="!setting.HideSchool && user.educationState==4" class="tagValue">{{user.schoolName}}</span>
+            <span v-else-if="setting.HideSchool && user.educationState==4" class="tagValue">已隐藏</span>
+            <span v-else class="tagValue">未认证</span>
           </div>
           <div :class="user.companyState==4?'red':''">
             <span class="fa fa-tv fa-3x"></span>
             <span class="tagTitle">工作认证</span>
-            <span v-if="setting.HideCompany" class="tagValue">{{user.companyName}}(已隐藏)</span>
-            <span v-else class="tagValue">{{user.companyName}}</span>
+            <span v-if="!setting.HideCompany && user.companyState==4" class="tagValue">{{user.companyName}}</span>
+            <span v-else-if="setting.HideCompany && user.companyState==4" class="tagValue">已隐藏</span>
+            <span v-else class="tagValue">未认证</span>
           </div>
         </div>
         <div class="wantContainer">
@@ -107,8 +109,9 @@ export default {
       var userId = this.$route.params.id;
       const res = await this.$http.get("User/" + userId);
       this.user = res.data;
-      this.introduction = JSON.parse(res.data.introduction);
-      this.setting = JSON.parse(res.data.setting);
+      if (this.user.introduction)
+        this.introduction = JSON.parse(res.data.introduction);
+      if (this.user.setting) this.setting = JSON.parse(res.data.setting);
     },
     async want() {
       const res = await this.$http.post("Want/" + this.user.id);
@@ -122,7 +125,6 @@ export default {
     },
     async follow() {
       const res = await this.$http.post("Follow/" + this.user.id);
-      console.log("sendFollow", res);
       if (res) {
         this.$message({
           message: "关注成功",
@@ -130,9 +132,15 @@ export default {
         });
       }
     },
+    //足迹
+    async look() {
+      await this.$http.get("Visitor/" + this.$route.params.id);
+    },
   },
   mounted() {
-    this.getDetail();
+    this.getDetail().then(() => {
+      this.look();
+    });
   },
 };
 </script>

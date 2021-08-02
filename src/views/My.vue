@@ -10,7 +10,7 @@
           <div>{{user.weight}}kg - </div>
           <div>{{user.educationDesc}} - </div>
           <div>{{user.homeCity}}人 - </div>
-          <div>现居{{user.currentCity}} - </div>
+          <div>现居{{user.currentProvince}} - </div>
           <div>{{user.career}}</div>
         </div>
         <div class="tagContainer">
@@ -117,8 +117,8 @@ export default {
     async getDetail() {
       const res = await this.$http.get("User");
       this.user = res.data;
-      this.introduction = JSON.parse(this.user.introduction);
-      this.setting = JSON.parse(this.user.setting);
+      if (this.user.introduction)this.introduction = JSON.parse(this.user.introduction);
+      if (this.user.setting) this.setting = JSON.parse(this.user.setting);
     },
     redirect(path) {
       this.$router.push(path);
@@ -137,10 +137,7 @@ export default {
           Introduction: JSON.stringify(this.introduction),
         };
         console.log("提交介绍", req);
-        var res = await this.$http.put(
-          "UserExtend/UpdateIntroduction",
-          req
-        );
+        var res = await this.$http.put("UserExtend/UpdateIntroduction", req);
       }
     },
   },

@@ -177,9 +177,6 @@ export default {
       font-weight: 700;
       color: black;
       line-height: 22px;
-      div {
-        margin-right: 6px;
-      }
       .el-image {
         width: 20px;
         height: 20px;
