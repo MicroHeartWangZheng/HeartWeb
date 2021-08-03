@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="state">
-            <el-button type="danger" round>{{item.gender?'他':'她'}}的主页</el-button>
+            <el-button type="danger" size="mini" round>{{item.gender?'他':'她'}}的主页</el-button>
           </div>
         </div>
       </div>

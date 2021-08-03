@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     async getDetail() {
-      const res = await this.$http.get("User/1396002165666873345");
+      const res = await this.$http.get("User");
       console.log("resDetail", res);
       this.setting = JSON.parse(res.data.setting);
       this.state = res.data.state;

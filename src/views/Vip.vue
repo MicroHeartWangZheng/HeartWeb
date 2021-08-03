@@ -7,7 +7,11 @@
       <div class="userInfo">
         <div>
           <span class="fa fa-user-o fa-3x" style="color: #ff6666"></span>
-          <span style="margin-left: 30px; font-size: 700">当前为：免费用户</span>
+          <span v-if="!user.vip" style="margin-left: 30px; font-size: 700">当前为：免费用户</span>
+          <div class="vipInfo" v-else>
+            <span style="margin:10px 0;">当前为：会员用户</span>
+            <span style="font-size:12px;color:#999999">到期时间：{{user.vipEndTime}}</span>
+          </div>
         </div>
         <div>
           <el-image :src="require('../assets/金币.png')" fit="contain"></el-image>
@@ -82,9 +86,9 @@
         </div>
       </div>
       <div class="buyButton" @click="buy">购买</div>
- 
+
       <el-dialog :visible.sync="qrCodeDialog.visiable" :center="true" title="微信扫码支付" width="400px" top="15%" height="400px">
-       <div style="margin:auto;width:120px;height:120px;padding:10px;" id="qrcode" ref="qrcode"></div>
+        <div style="margin:auto;width:120px;height:120px;padding:10px;" id="qrcode" ref="qrcode"></div>
       </el-dialog>
 
     </div>
@@ -96,7 +100,7 @@ export default {
   data() {
     return {
       selectedIndex: 1,
-
+      user: {},
       goodsList: [],
       qrCodeDialog: {
         visiable: false,
@@ -107,8 +111,10 @@ export default {
     async getGoods() {
       var res = await this.$http.get("Goods");
       this.goodsList = res.data;
-
-      console.log("goodsList", this.goodsList);
+    },
+    async getUser() {
+      const res = await this.$http.get("User");
+      this.user = res.data;
     },
     redirect(path) {
       this.$router.push(path);
@@ -136,6 +142,7 @@ export default {
     },
   },
   mounted() {
+    this.getUser();
     this.getGoods();
   },
 };
@@ -188,9 +195,13 @@ export default {
       width: 200px;
       height: 60px;
     }
-    span {
-      height: 48px;
-      line-height: 48px;
+
+    .vipInfo {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-direction: column;
+      margin-left: 20px;
     }
     .el-image {
       width: 50px;

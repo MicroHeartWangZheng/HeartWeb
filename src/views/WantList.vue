@@ -2,89 +2,117 @@
   <div class="page">
     <div class="listContent">
       <div class="title">
-        <span :class="chooseIndex==1?'choosed':''" @click="choose(1)">收到的申请</span>
-        <span :class="chooseIndex==2?'choosed':''" @click="choose(2)">发出的申请</span>
+        <span :class="chooseIndex==1?'choosed':''" @click="choose(1)">发出的申请</span>
+        <span :class="chooseIndex==2?'choosed':''" @click="choose(2)">收到的申请</span>
       </div>
-      <div v-if="chooseIndex==1" class="sendList">
+      <div v-if="chooseIndex==1" class="wantList">
         <div class="wantItem" v-for="(item,index) in sendList" :key="index">
-          <div class="baseInfoContainer">
-            <div class="img" @click="redict('userdetail/'+item.toUserId)">
+          <div class="baseInfoContainer pointer" @click="redirect('userdetail/'+item.toUserId)">
+            <div class="img">
               <el-image fit="cover" :src="item.headPic"></el-image>
             </div>
             <div class="baseInfo">
-              <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
-              <span style="font-size:12px;color:#999999;">{{item.year}}年|{{item.height}}cm|{{item.educationDesc}}|{{item.career}}</span>
-              <span style="font-size:12px;color:#999999;">{{item.createTime}} 发出</span>
+              <div>
+                <span v-if="item.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
+              </div>
+              <span style="font-size:12px;color:#29292;">{{item.year}}年 - {{item.height}}cm - {{item.educationDesc}} - {{item.career}}</span>
+              <span style="font-size:12px;color:#999999;">{{item.createTime}} 申请</span>
             </div>
           </div>
-          <div class="wechat">
+          <div class="wechat" v-if="item.state==3">
             <span style="font-size:12px;color:#999999;font-weight:700;">Ta 的微信</span>
             <span style="font-size:12px;color:#ff6666;">微信号：{{item.weChatId}}</span>
           </div>
           <div class="state">
-            <span class="fa fa-heart fa-2x" style="color:#ff6666;"></span>
-            <span style="font-size:12px;color:#999999;">{{item.replyTime}} 回复</span>
+            <span v-if="item.state==3" class="fa fa-heart fa-2x" style="color:#ff6666;"></span>
+            <span v-else class="fa fa-heart-o fa-2x" style="color:#999999;"></span>
+            <span style="font-size:12px;color:#999999;">{{wantStates[item.state]}}</span>
           </div>
         </div>
       </div>
 
-      <div v-if="chooseIndex==2" class="sendList">
+      <div v-if="chooseIndex==2" class="wantList">
         <div class="wantItem" v-for="(item,index) in receiveList" :key="index">
-          <div class="baseInfoContainer">
-            <div class="img" @click="redict('userdetail/'+item.fromUserId)">
+          <div class="baseInfoContainer pointer" @click="redirect('userdetail/'+item.fromUserId)">
+            <div class="img">
               <el-image fit="cover" :src="item.headPic"></el-image>
             </div>
             <div class="baseInfo">
-              <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
-              <span style="font-size:12px;color:#999999;">{{item.year}}年|{{item.height}}cm|{{item.educationDesc}}|{{item.career}}</span>
-              <span style="font-size:12px;color:#999999;">{{item.createTime}} 发出</span>
+              <div>
+                <span v-if="item.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
+              </div>
+              <span style="font-size:12px;color:#29292;">{{item.year}}年 - {{item.height}}cm - {{item.educationDesc}} - {{item.career}}</span>
+              <span style="font-size:12px;color:#999999;">{{item.createTime}} 申请</span>
             </div>
           </div>
-          <div class="wechat">
+          <div class="wechat" v-if="item.state==3">
             <span style="font-size:12px;color:#999999;font-weight:700;">Ta 的微信</span>
             <span style="font-size:12px;color:#ff6666;">微信号：{{item.weChatId}}</span>
           </div>
-          <div class="state">
-            <span class="fa fa-heart fa-2x" style="color:#ff6666;"></span>
-            <span style="font-size:12px;color:#999999;">{{item.replyTime}} 回复</span>
+          <div class="operation">
+            <div v-if="item.state==1||item.state==2">
+              <el-button type="success" size="mini" @click="accept(item.id)" round>通 过</el-button>
+              <el-button type="danger" size="mini" @click="refuse(item.id)" round>拒 绝</el-button>
+            </div>
+            <div v-else>
+              <span style="font-size:12px;color:#999999;">{{wantStates[item.state]=='对方已拒绝'?'已拒绝':wantStates[item.state]}}</span>
+            </div>
           </div>
         </div>
       </div>
       <div>
-        <el-pagination background :page-size="search.pageIndex" :pager-count="search.pageSize" layout="prev, pager, next" :total="search.totalCount/search.pageSize">
+        <el-pagination background @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
+import config from "/src/common/config.js";
 export default {
   data() {
     return {
       chooseIndex: 1,
       sendList: [],
       receiveList: [],
-      search: {
+      queryInfo: {
         pageIndex: 1,
         pageSize: 10,
       },
       totalCount: 0,
+      wantStates: config.wantStates,
     };
   },
   methods: {
     async getSendList() {
-      var res = await this.$http.post("Want/SendList", this.search);
-      console.log("sentList", res);
+      var res = await this.$http.post("Want/SendList", this.queryInfo);
       this.sendList = res.data.items;
       this.totalCount = res.data.total;
     },
     async getReceiveList() {
-      var res = await this.$http.post("Want/ReceiveList", this.search);
-      console.log("receiveList", res);
+      var res = await this.$http.post("Want/ReceiveList", this.queryInfo);
       this.receiveList = res.data.items;
       this.totalCount = res.data.total;
     },
+    async refuse(id) {
+      var res = await this.$http.put("Want/Refuse/" + id);
+      await this.getReceiveList();
+    },
+    async accept(id) {
+      var res = await this.$http.put("Want/Accept/" + id);
+      await this.getReceiveList();
+    },
+    async currentIndexChange(index) {
+      this.queryInfo.pageIndex = index;
+      if (this.chooseIndex == 1) await this.getSendList();
+      else await this.getReceiveList();
+    },
     async choose(index) {
+      this.queryInfo.pageIndex = 1;
       if (index == 1) {
         await this.getSendList();
       } else {
@@ -92,7 +120,7 @@ export default {
       }
       this.chooseIndex = index;
     },
-    redict(path) {
+    redirect(path) {
       this.$router.push(path);
     },
   },
@@ -131,7 +159,7 @@ export default {
       color: #fff;
     }
   }
-  .sendList {
+  .wantList {
     width: 100%;
     height: 1040px;
     .wantItem {
@@ -179,6 +207,11 @@ export default {
         justify-content: space-between;
         text-align: center;
         height: 60px;
+      }
+      .operation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
     }
     .wantItem:hover {

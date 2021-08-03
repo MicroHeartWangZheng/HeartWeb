@@ -6,15 +6,20 @@
         <div class="titleContainer">
           <span @click="redirect('/users')">用户列表</span>
           <span @click="redirect('/momentlist')">动态</span>
-          <span @click="redirect('/wantlist')">列表</span>
+          <!-- <span @click="redirect('/wantlist')">列表</span> -->
           <el-dropdown @command="handleCommand">
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="fa fa-id-card" command="/my">我的主页</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-eye" command="wantList">申请列表
+                <el-badge v-if="newWantCount!=0" class="mark" :value="newWantCount" />
+              </el-dropdown-item>
               <el-dropdown-item icon="fa fa-eye" command="/followlist">关注列表</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-eye" command="/looklist">来访列表</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-diamond" command="/vip">会员与金币</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-eye" command="lookList">来访列表
+                <el-badge v-if="newVisitorCount!=0" class="mark" :value="newVisitorCount" />
+              </el-dropdown-item>
+              <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-diamond" command="/vip">购买会员</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
               <el-dropdown-item icon="fa fa-sign-out" command="signOut">退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -43,6 +48,8 @@ export default {
   data() {
     return {
       user: {},
+      newVisitorCount: 0,
+      newWantCount: 0,
     };
   },
   methods: {
@@ -54,13 +61,24 @@ export default {
       this.$router.push(path);
     },
     async handleCommand(path) {
-      if (path !== "signOut") {
-        this.$router.push(path);
+      if (path === "signOut") {
+        await this.destoryToken();
+        window.sessionStorage.removeItem("token");
+        this.redirect("/login");
         return;
       }
-      await this.destoryToken();
-      window.sessionStorage.removeItem("token");
-      this.redirect("/login");
+      if (path === "lookList") {
+        this.newVisitorCount = 0;
+        this.redirect("/looklist");
+        return;
+      }
+      if (path === "wantList") {
+        this.newWantCount = 0;
+        this.redirect("/wantList");
+        return;
+      }
+      this.$router.push(path);
+      return;
     },
     //销毁Token
     async destoryToken() {
@@ -68,9 +86,21 @@ export default {
       var res = await this.$http.get("Token/Destory/" + token);
       return res ? true : false;
     },
+    //新访客数量
+    async getNewVisitorCount() {
+      var res = await this.$http.get("Visitor/NewVisitorCount");
+      this.newVisitorCount = res.data;
+    },
+    //新申请人数量
+    async getNewWantCount() {
+      var res = await this.$http.get("Want/NewCount");
+      this.newWantCount = res.data;
+    },
   },
   mounted() {
     this.getDetail();
+    this.getNewVisitorCount();
+    this.getNewWantCount();
   },
 };
 </script>
