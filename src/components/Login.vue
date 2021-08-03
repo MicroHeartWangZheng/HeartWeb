@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       loginData: {
-        phone: "17601223799",
+        phone: "17601223700",
         code: "123456",
       },
       timer: "", //计时器

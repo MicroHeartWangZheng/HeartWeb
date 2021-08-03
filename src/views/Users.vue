@@ -61,13 +61,10 @@
                   </div>
                 </div>
                 <div class="positionInfo">
-                  <div>现居{{user.homeCity}} ·</div>
-                  <div>{{user.currentCity}}人</div>
+                  <span>现居{{user.homeCity}} - {{user.currentCity}}人</span>
                 </div>
-                <div class="baseInfo" style="color:#666666">
-                  <div>{{user.year}}年 · </div>
-                  <div>{{user.height}}cm · </div>
-                  <div>{{user.career}}</div>
+                <div class="baseInfo" style="color:#999999">
+                  <span>{{user.year}}年 - {{user.educationDesc}} - {{user.height}}cm - {{user.career}}</span>
                 </div>
               </div>
             </div>
@@ -275,7 +272,7 @@ export default {
       height: 20px;
       font-size: 14px;
       font-weight: 700;
-      color: black;
+      color: #ff6666;
       line-height: 22px;
       div {
         margin-right: 6px;
@@ -284,13 +281,6 @@ export default {
         width: 20px;
         height: 20px;
       }
-    }
-  }
-  .positionInfo,
-  .baseInfo {
-    display: flex;
-    div {
-      margin-right: 6px;
     }
   }
 }

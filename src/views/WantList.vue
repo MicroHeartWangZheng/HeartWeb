@@ -66,7 +66,7 @@ export default {
       receiveList: [],
       search: {
         pageIndex: 1,
-        pageSize: 21,
+        pageSize: 10,
       },
       totalCount: 0,
     };

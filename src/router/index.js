@@ -15,6 +15,7 @@ import OrderList from '../views/OrderList.vue'
 import MomentList from '../views/MomentList.vue'
 import SetpOne from '../views/SetpOne.vue'
 import UpdatePictures from '../views/UpdatePictures.vue'
+import LookList from '../views/LookList.vue'
 
 Vue.use(VueRouter)
 
@@ -50,6 +51,10 @@ const router = new VueRouter({
         {
           path: '/followlist',
           component: FollowList,
+        },
+        {
+          path: '/looklist',
+          component: LookList,
         },
         {
           path: '/my',
