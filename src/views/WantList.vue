@@ -99,8 +99,25 @@ export default {
       this.totalCount = res.data.total;
     },
     async refuse(id) {
-      var res = await this.$http.put("Want/Refuse/" + id);
-      await this.getReceiveList();
+      this.$confirm("确定拒绝吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          await this.$http.put("Want/Refuse/" + id);
+          this.$message({
+            type: "success",
+            message: "已拒绝!",
+          });
+          await this.getReceiveList();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     async accept(id) {
       var res = await this.$http.put("Want/Accept/" + id);

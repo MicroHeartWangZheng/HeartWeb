@@ -3,6 +3,11 @@
     <div class="baseInfoContainer">
       <el-image fit="cover" :src="user.headPic" alt=""></el-image>
       <div class="rightContainer">
+        <div class="warnContainer" @click="clickReport">
+          <el-tooltip effect="dark" content="举报" placement="left-end">
+            <span class="fa fa-exclamation-triangle"></span>
+          </el-tooltip>
+        </div>
         <div class="nickContainer">{{user.nickName}}</div>
         <div class="centenContainer">
           <div>{{user.year}}年 - </div>
@@ -87,7 +92,14 @@
         </div>
       </div>
     </div>
-
+    <el-dialog title="举报原因" :visible.sync="dialogVisible" width="30%">
+      <el-input type="textarea" :autosize="{ minRows: 6, maxRows: 10}" placeholder="请输入举报内容" v-model="reportContent">
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
+        <el-button type="danger" @click="report" size="mini">提 交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -102,6 +114,8 @@ export default {
         halfIntroduce: "",
       },
       setting: {},
+      dialogVisible: false,
+      reportContent: "",
     };
   },
   methods: {
@@ -113,21 +127,61 @@ export default {
         this.introduction = JSON.parse(res.data.introduction);
       if (this.user.setting) this.setting = JSON.parse(res.data.setting);
     },
+    //申请
     async want() {
-      const res = await this.$http.post("Want/" + this.user.id);
-      console.log("sendWant", res);
-      if (res) {
-        this.$message({
-          message: "发送求认识成功,等待对方回应",
-          type: "success",
+      this.$confirm("确定申请吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          const res = await this.$http.post("Want/" + this.user.id);
+          if (res) {
+            this.$message({
+              type: "success",
+              message: "已发出申请，等待对方回应。",
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
         });
-      }
     },
+    //关注
     async follow() {
       const res = await this.$http.post("Follow/" + this.user.id);
       if (res) {
         this.$message({
           message: "关注成功",
+          type: "success",
+        });
+      }
+    },
+    //点击举报
+    clickReport() {
+      this.dialogVisible = true;
+    },
+    async report() {
+      if (this.reportContent.length == 0) {
+        this.$message({
+          message: "举报原因必填",
+          type: "error",
+        });
+        return false;
+      }
+      var data = {
+        reportUserId: this.$route.params.id,
+        content: this.reportContent,
+      };
+      var res = await this.$http.post("Report", data);
+      if (res) {
+        this.dialogVisible = false;
+        this.reportContent = "";
+        this.$message({
+          message: "举报成功,工作人员会在三个工作日处理完成。",
           type: "success",
         });
       }
@@ -167,6 +221,19 @@ export default {
     height: 100%;
     color: #999999;
     padding: 20px;
+
+    position: relative;
+    .warnContainer {
+      position: absolute;
+      right: 8px;
+      top: 5px;
+      font-size: 28px;
+      color: #ff7777;
+    }
+    .warnContainer:hover {
+      font-size: 30px;
+      color: #ff6666;
+    }
     .nickContainer {
       text-align: center;
       font-size: 18px;

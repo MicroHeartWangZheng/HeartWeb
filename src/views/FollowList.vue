@@ -1,106 +1,157 @@
 <template>
   <div class="page">
-    <div class="titleContainer">
-      <span>我关注的人</span>
-    </div>
-    <div class="content">
-      <el-row :gutter="20">
-        <el-col :span="6" v-for="followUser in followUsers" :key="followUser.id">
-          <div class="userItemContainer">
-            <div class="delete" @click="clickRemove(followUser.id)"><span class="fa fa-times"></span></div>
-            <el-image :src="followUser.headPic" fit="cover" @click="redict('/userdetail/'+followUser.followUserId)"></el-image>
-            <div class="userInfoContainer">
-              <div class="nickInfo">
-                <div>{{followUser.nickName}} ·</div>
-                <div>已认证</div>
-                <div>
-                  <el-image :src="require('../assets/认证.png')" fit="contain"></el-image>
-                </div>
+    <div class="listContent">
+      <div class="title">
+        <span :class="chooseIndex==1?'choosed':''" @click="choose(1)">关注</span>
+        <span :class="chooseIndex==2?'choosed':''" @click="choose(2)">粉丝</span>
+      </div>
+      <div v-if="chooseIndex==1" class="followList">
+        <div class="wantItem" v-for="(item,index) in followList" :key="index">
+          <div class="baseInfoContainer pointer" @click="redirectDetail(item.followUserId)">
+            <div class="img">
+              <el-image fit="cover" :src="item.headPic"></el-image>
+            </div>
+            <div class="baseInfo">
+              <div>
+                <span v-if="item.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
               </div>
-              <div class="positionInfo">
-                <div>现居{{followUser.homeCity}} ·</div>
-                <div>{{followUser.currentCity}}人</div>
-              </div>
-              <div class="baseInfo" style="color:#666666">
-                <div>{{followUser.year}}年 · </div>
-                <div>{{followUser.height}}cm · </div>
-                <div>{{followUser.educationDesc}} · </div>
-                <div>{{followUser.career}}</div>
-              </div>
+              <span style="font-size:12px;color:#29292;">{{item.year}}年 - {{item.currentCity}} - {{item.educationDesc}} - {{item.career}}</span>
+              <span style="font-size:12px;color:#999999;">{{item.createTime}} 关注</span>
             </div>
           </div>
-        </el-col>
-      </el-row>
 
+          <div class="operation">
+            <div>
+              <el-button type="success" size="mini" @click="cancel(item.id)" round>取消关注</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="chooseIndex==2" class="followList">
+        <div class="wantItem" v-for="(item,index) in fansList" :key="index">
+          <div class="baseInfoContainer pointer" @click="redirectDetail(item.userId)">
+            <div class="img">
+              <el-image fit="cover" :src="item.headPic"></el-image>
+            </div>
+            <div class="baseInfo">
+              <div>
+                <span v-if="item.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                <span style="font-size:14px;color:#ff6666;font-weight:700;">{{item.nickName}}</span>
+              </div>
+              <span style="font-size:12px;color:#29292;">{{item.year}}年 - {{item.currentCity}} - {{item.educationDesc}} - {{item.career}}</span>
+              <span style="font-size:12px;color:#999999;">{{item.createTime}} 关注</span>
+            </div>
+          </div>
+
+          <div class="operation">
+            <div v-if="item.userId=='0'">
+              <el-button type="success" size="mini" @click="unlock" round>解 锁</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div>
         <el-pagination background @current-change="currentIndexChange" :page-size="queryInfo.pageSize" :pager-count="7" layout="prev, pager, next" :total="totalCount">
         </el-pagination>
       </div>
     </div>
-
   </div>
 </template>
 <script>
+import config from "/src/common/config.js";
 export default {
   data() {
     return {
-      followUsers: [],
+      chooseIndex: 1,
+      followList: [],
+      fansList: [],
       queryInfo: {
         pageIndex: 1,
-        pageSize: 8,
+        pageSize: 10,
       },
       totalCount: 0,
+      wantStates: config.wantStates,
     };
   },
   methods: {
     async getFollowList() {
-      var res = await this.$http.get("Follow", {
+      var res = await this.$http.get("Follow/GetFollowList", {
         params: this.queryInfo,
       });
-      this.followUsers = res.data.items;
+      this.followList = res.data.items;
       this.totalCount = res.data.total;
     },
-    async remove(id) {
-      var res = await this.$http.delete("Follow/" + id);
-      await this.getFollowList();
-      return res ? true : false;
+    async getFansList() {
+      var res = await this.$http.get("Follow/GetFansList", {
+        params: this.queryInfo,
+      });
+      this.fansList = res.data.items;
+      this.totalCount = res.data.total;
     },
-    async clickRemove(id) {
-      this.$confirm("确定取消关注吗?", "提示", {
+    async cancel(id) {
+      this.$confirm("确定去掉关注吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          var res = this.remove(id);
-          if (res) {
-            this.$message({
-              type: "success",
-              message: "取消关注成功!",
-            });
-          } else {
-            this.$message({
-              type: "error",
-              message: "取消关注失败,请重试!",
-            });
-          }
+        .then(async () => {
+          await this.$http.delete("Follow/" + id);
+          this.$message({
+            type: "success",
+            message: "取消关注成功!",
+          });
+          await this.getFollowList();
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消操作",
+            message: "已取消",
           });
         });
     },
+
     async currentIndexChange(index) {
       this.queryInfo.pageIndex = index;
-      await this.getFollowList();
+      if (this.chooseIndex == 1) await this.getFollowList();
+      else await this.getFansList();
     },
-    redict(path) {
-      this.$router.push(path);
+    async choose(index) {
+      //初始化分页
+      this.queryInfo.pageIndex = 1;
+      if (index == 1) {
+        await this.getFollowList();
+      } else {
+        await this.getFansList();
+      }
+      this.chooseIndex = index;
+    },
+    redirectDetail(userId) {
+      if (userId != "0") {
+        this.$router.push("/UserDetail/" + userId);
+        return;
+      }
+      //非VIP 跳转
+      this.$message({
+        message: "查看来访人员为会员特有功能，请先开通会员。",
+      });
+      setTimeout(() => {
+        this.$router.push("/vip");
+      }, 1500);
+    },
+    unlock() {
+      this.$message({
+        message: "查看关注为会员特有功能，请先开通会员。",
+      });
+      setTimeout(() => {
+        this.$router.push("/vip");
+      }, 1500);
     },
   },
-  created() {
+  mounted() {
     this.getFollowList();
   },
 };
@@ -108,86 +159,76 @@ export default {
 <style lang="less" scoped>
 .page {
   width: 100%;
-  padding-top: 30px;
-}
-.titleContainer {
-  display: flex;
-  justify-content: center;
-  position: relative;
-  color: #999999;
-  font-size: 18px;
-  margin-bottom: 20px;
-  span:before,
-  span:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    float: left;
-    height: 1px;
-    width: 430px;
-    border-top: 1px dashed #999999;
-  }
-  span:before {
-    left: 0%;
-  }
-  span:after {
-    right: 0%;
-  }
-}
-.content {
-  height: 90vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  padding-top: 30px;
 }
-
-.userItemContainer {
-  width: 210px;
-  background-color: #ffffff;
-  padding: 12px;
+.listContent {
+  background-color: #fff;
   border-radius: 10px;
-  margin-bottom: 16px;
-  position: relative;
-  .delete {
-    position: absolute;
-    right: 3px;
-    top: 0px;
-    color: #ff6666;
-  }
-  .el-image {
-    width: 100%;
-    height: 264px;
-    border-radius: 10px 10px 0 0;
-    margin-bottom: 6px;
-  }
-  .userInfoContainer {
-    height: 70px;
+  padding: 12px;
+  .title {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 12px;
-    font-family: Tahoma, Arial, Helvetica, "Microsoft YaHei New",
-      "Microsoft Yahei", sans-serif;
-    color: #292929;
-    .nickInfo {
-      display: flex;
-      width: 100%;
-      height: 20px;
-      font-size: 14px;
-      font-weight: 700;
-      color: black;
-      line-height: 22px;
-      .el-image {
-        width: 20px;
-        height: 20px;
-      }
+    justify-content: space-around;
+    width: 80%;
+    margin: 20px auto 0 auto;
+    font-size: 16px;
+    span {
+      width: 100px;
+      border-radius: 20px;
+      text-align: center;
+      height: 30px;
+      line-height: 30px;
+    }
+    span:hover,
+    .choosed {
+      background-color: #ff6666;
+      color: #fff;
     }
   }
-  .positionInfo,
-  .baseInfo {
-    display: flex;
-    div {
-      margin-right: 6px;
+  .followList {
+    width: 100%;
+    height: 1040px;
+    .wantItem {
+      width: 800px;
+      height: 64px;
+      margin: 20px auto;
+      display: flex;
+      padding: 10px 20px;
+      border-bottom: 1px solid #f2f2f2;
+      justify-content: space-between;
+      border-radius: 10px;
+      .baseInfoContainer {
+        display: flex;
+        align-items: center;
+        .img {
+          display: flex;
+          align-items: center;
+          margin-right: 10px;
+          .el-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+          }
+        }
+        .img:hover {
+          cursor: pointer;
+        }
+        .baseInfo {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: 60px;
+        }
+      }
+      .operation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+    .wantItem:hover {
+      background-color: #f2f2f2;
     }
   }
 }
