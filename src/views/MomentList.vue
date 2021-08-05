@@ -4,16 +4,16 @@
 
       <!---发表动态-->
       <div class="createMoment borderRadius">
-        <el-input type="textarea" :rows="3" maxlength="500" v-model="moment.content"></el-input>
-        <div class="pics">
-          <div class="picItemContainer"  v-for="(pic,index) in moment.pictures" :key="index">
+        <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 15}" maxlength="500" v-model="moment.content"></el-input>
+        <div class="createMomentPics">
+          <div class="picItemContainer" v-for="(pic,index) in moment.pictures" :key="index">
             <div class="fa fa-times" @click="removePic(index)"></div>
             <el-image class="picItem" :src="pic" :preview-src-list="moment.pictures"></el-image>
           </div>
         </div>
         <div class="bottom">
           <div class="left">
-            <el-upload id="upload"  :on-success="uploadSuccess" action="https://localhost/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
+            <el-upload id="upload" :on-success="uploadSuccess" action="https://localhost/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
               <i class="fa fa-picture-o pointer"></i>
             </el-upload>
             <el-dropdown class="topic pointer">
@@ -27,7 +27,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <div class="right pointer"> 发送</div>
+          <div class="right pointer" @click="addMoment">发 布</div>
         </div>
       </div>
 
@@ -44,14 +44,16 @@
         <div class="momentItem borderRadius" v-for="(moment,index) in moments" :key="index">
           <!--用户信息-->
           <div class="top pointer">
+
             <el-avatar class="headPic" shape="square" :src="moment.headPic"></el-avatar>
             <div class="title">
-              <div class="nickName">{{moment.nickName}}</div>
+              <div>
+                <span v-if="moment.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                <span style="font-size:14px;color:#ff6666;font-weight:700;">{{moment.nickName}}</span>
+              </div>
               <div class="baseInfo">
-                <span>{{moment.year}}年 -</span>
-                <span>{{moment.education}} -</span>
-                <span>{{moment.currentCity}} -</span>
-                <span>{{moment.work}}</span>
+                <span>{{moment.year}}年 - {{moment.educationDesc}} - {{moment.currentCity}} - {{moment.career}}</span>
               </div>
             </div>
           </div>
@@ -61,11 +63,11 @@
               {{moment.content}}
             </div>
             <div class="pics">
-              <el-image :src="pic" v-for="(pic,index) in moment.pictures" :key="index" :preview-src-list="moment.pictures"></el-image>
+              <el-image fit="cover" v-for="(pic,index) in moment.pictures" :key="index" :src="pic" :preview-src-list="moment.pictures"></el-image>
             </div>
             <div class="bottom">
               <div class="bottomItem">
-                <div v-if="!moment.like" class="fa fa-heart-o"></div>
+                <div v-if="!moment.currentUserLike" class="fa fa-heart-o" @click="likeMoment(moment)"></div>
                 <div v-else class="fa fa-heart redColor"></div>
                 <div class="count">{{moment.likeCount}}</div>
               </div>
@@ -103,10 +105,7 @@
                     <div class="title">
                       <div class="nickName">{{comment.nickName}}</div>
                       <div class="baseInfo">
-                        <span>{{comment.year}}年 -</span>
-                        <span>{{comment.education}} -</span>
-                        <span>{{comment.currentCity}} -</span>
-                        <span>{{comment.work}}</span>
+                        <span>{{moment.year}}年 - {{moment.educationDesc}} - {{moment.currentCity}} - {{moment.career}}</span>
                       </div>
                     </div>
                   </div>
@@ -231,14 +230,20 @@ export default {
     return {
       queryInfo: {
         pageIndex: 1,
-        pageSize: 20,
+        pageSize: 10,
       },
       totalCount: 0,
       currentIndex: 1,
       //发布动态
       moment: {
-        content: "",
+        topic: null,
+        content: null,
         pictures: [],
+        anonymous: false, //是否匿名
+        address: null,
+        location: null,
+        latitude: null,
+        longitude: null,
       },
       //回复对话框
       replyDialog: {
@@ -254,314 +259,8 @@ export default {
         commentContent: "",
         content: "",
       },
-      moments: [
-        {
-          id: 1,
-          userId: 11,
-          nickName: "文件传输助手",
-          year: "00",
-          currentCity: "杭州",
-          work: "工程师",
-          education: "本科",
-          like: true,
-          likeCount: 102,
-          commentCount: 100,
-          headPic:
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          content:
-            "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的，特别特别脆甜，炒肉好香。在云南忙的时候就直接烫一碗菌香干拌米线，1分钟搞定，满满一碗，真是幸福感满满~",
-          pictures: [
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          ],
-          unfoldComment: false,
-          comments: [
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-              replys: [
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 1110,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: false,
-                },
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 4,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: true,
-                },
-              ],
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 3,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 4,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-          ],
-        },
-        {
-          id: 2,
-          userId: 21,
-          nickName: "文件传输助手",
-          year: "00",
-          currentCity: "杭州",
-          work: "工程师",
-          education: "本科",
-          like: true,
-          likeCount: 102,
-          commentCount: 100,
-          headPic:
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          content:
-            "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的，特别特别脆甜，炒肉好香。在云南忙的时候就直接烫一碗菌香干拌米线，1分钟搞定，满满一碗，真是幸福感满满~",
-          pictures: [
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          ],
-          unfoldComment: false,
-          comments: [
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-              replys: [
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 110,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: false,
-                },
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 110,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: true,
-                },
-              ],
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-          ],
-        },
-        {
-          id: 3,
-          userId: 21,
-          nickName: "文件传输助手",
-          year: "00",
-          currentCity: "杭州",
-          work: "工程师",
-          education: "本科",
-          like: true,
-          likeCount: 102,
-          commentCount: 100,
-          headPic:
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          content:
-            "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的，特别特别脆甜，炒肉好香。在云南忙的时候就直接烫一碗菌香干拌米线，1分钟搞定，满满一碗，真是幸福感满满~",
-          pictures: [
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-            "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-          ],
-          unfoldComment: false,
-          comments: [
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-              replys: [
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 110,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: false,
-                },
-                {
-                  id: 1234,
-                  headPic:
-                    "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-                  userId: 110,
-                  nickName: "文件传输助手",
-                  year: "98",
-                  currentCity: "杭州",
-                  work: "工程师",
-                  education: "本科",
-                  content:
-                    "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-                  createTime: "7-5 11:49",
-                  like: true,
-                },
-              ],
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-            {
-              id: 1234,
-              headPic:
-                "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
-              userId: 110,
-              nickName: "文件传输助手",
-              year: "98",
-              currentCity: "杭州",
-              work: "工程师",
-              education: "本科",
-              content:
-                "花园快收拾好啦，挖几根甜脆的茭瓜拌米线吃家里猪圈牛圈改造基本收尾，大部分工作都是请村里的师傅做好的。这几天的茭瓜正是季节，甜甜嫩嫩的",
-              createTime: "7-5 11:49",
-              like: true,
-            },
-          ],
-        },
-      ],
+      moments: [],
+
       user: {
         headPic:
           "https://heart.lostsea.cn/upload/2021-02-07/96603cdd851f45bfa0939db49a8e8829.jpg",
@@ -572,6 +271,37 @@ export default {
     };
   },
   methods: {
+    async addMoment() {
+      if (!this.moment.content) {
+        this.$message({
+          message: "发布内容不能为空",
+          type: "error",
+        });
+        return;
+      }
+      var res = await this.$http.post("Moment", this.moment);
+      if (!res) return;
+      this.moment.topic = null;
+      this.moment.content = null;
+      this.moment.pictures = [];
+      await this.getMomentList();
+      this.$message({
+        message: "发布成功!",
+        type: "success",
+      });
+    },
+    async getMomentList() {
+      var res = await this.$http.get("Moment");
+      if (!res) return;
+      this.moments = res.data.items;
+      this.totalCount = res.data.total;
+    },
+    async likeMoment(moment) {
+      var res = await this.$http.patch("Moment/LikeOrNot/" + moment.id);
+      if (res)
+        //点赞成功
+        moment.currentUserLike = true;
+    },
     redirect(path) {
       this.$router.push(path);
     },
@@ -603,17 +333,16 @@ export default {
     uploadSuccess(response, file, fileList) {
       this.moment.pictures = [];
       fileList.forEach((file) => {
-        this.moment.pictures.push(
-          "https://localhost" + file.response.data
-        );
+        this.moment.pictures.push("https://localhost" + file.response.data);
       });
-      console.log(this.moment.pictures);
     },
-    removePic(index){
-      this.moment.pictures.splice(index,1);
-    }
+    removePic(index) {
+      this.moment.pictures.splice(index, 1);
+    },
   },
-  mounted() {},
+  mounted() {
+    this.getMomentList();
+  },
   created() {},
 };
 </script>
@@ -632,10 +361,10 @@ export default {
     padding: 20px 20px 10px 20px;
     margin-bottom: 8px;
     color: #838383;
-
-    .pics {
+    .createMomentPics {
       display: flex;
       justify-content: flex-start;
+      align-items: flex-start;
       flex-wrap: wrap;
       margin: 10px auto;
       .picItemContainer {
@@ -648,7 +377,7 @@ export default {
         color: #ff7777;
         z-index: 100;
       }
-      .fa:hover{
+      .fa:hover {
         color: #ff6666;
       }
       .picItem {
@@ -680,12 +409,12 @@ export default {
         padding: 0px 15px;
         font-size: 14px;
         line-height: 26px;
-        background-color: #ff8200;
+        background-color: #ff7777;
         color: #fff;
         border-radius: 13px;
       }
       .right:hover {
-        background-color: #ff5900;
+        background-color: #ff6666;
       }
     }
   }
@@ -732,6 +461,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     height: 50px;
+    margin-bottom: 6px;
     .headPic {
       width: 50px;
       height: 50px;
@@ -745,14 +475,18 @@ export default {
     }
     .pics {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
+
       .el-image {
-        margin-top: 8px;
-        width: 188px;
+        margin: 8px 5px 0 5px;
         height: 188px;
+        width: 186px;
         border-radius: 5px;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
     .bottom {
@@ -772,7 +506,7 @@ export default {
       }
     }
     .bottomItem:hover {
-      color: #e6a23c;
+      color: #ff7777;
     }
   }
   .commentContainer {
@@ -915,15 +649,12 @@ export default {
 }
 .nickName {
   font-size: 14px;
-  font-weight: 500;
-  color: #eb7350;
+  color: #ff6666;
+  font-weight: 700;
 }
 .baseInfo {
-  font-size: 10px;
-  display: flex;
-  justify-content: space-between;
-  width: 136px;
-  color: #909399;
+  font-size: 12px;
+  color: #29292;
 }
 
 .redColor {

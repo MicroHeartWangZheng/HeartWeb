@@ -76,4 +76,8 @@ body,
 
 .borderRadius {
     border-radius: 8px;
-  }
+}
+
+ .el-pager>li{
+    background-color: #ff6666;
+}
