@@ -44,7 +44,6 @@
         <div class="momentItem borderRadius" v-for="(moment,index) in moments" :key="index">
           <!--用户信息-->
           <div class="top pointer">
-
             <el-avatar class="headPic" shape="square" :src="moment.headPic"></el-avatar>
             <div class="title">
               <div>
@@ -65,13 +64,17 @@
             <div class="pics">
               <el-image fit="cover" v-for="(pic,index) in moment.pictures" :key="index" :src="pic" :preview-src-list="moment.pictures"></el-image>
             </div>
+            <div class="time">
+              <span>{{moment.time}}</span>
+              <span>#单身狗的生活#</span>
+            </div>
             <div class="bottom">
-              <div class="bottomItem">
-                <div v-if="!moment.currentUserLike" class="fa fa-heart-o" @click="likeMoment(moment)"></div>
+              <div class="bottomItem" @click="likeMoment(moment)">
+                <div v-if="!moment.currentUserLike" class="fa fa-heart-o"></div>
                 <div v-else class="fa fa-heart redColor"></div>
                 <div class="count">{{moment.likeCount}}</div>
               </div>
-              <div class="bottomItem" @click="unfoldComment(moment.id)">
+              <div class="bottomItem" @click="unfoldComment(moment)">
                 <div class="el-icon-chat-dot-round"></div>
                 <div class="count">{{moment.commentCount}}</div>
               </div>
@@ -92,7 +95,7 @@
                 <div class="replyButton">
                   <div></div>
                   <div>
-                    <el-button size="medium" round>发表</el-button>
+                    <el-button size="mini" round>发表</el-button>
                   </div>
                 </div>
               </div>
@@ -103,9 +106,13 @@
                   <div class="topLeft pointer">
                     <el-avatar class="commentHeadPic" shape="circle" :src="comment.headPic"></el-avatar>
                     <div class="title">
-                      <div class="nickName">{{comment.nickName}}</div>
+                      <div>
+                        <span v-if="comment.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                        <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
+                        <span style="font-size:14px;color:#ff6666;font-weight:700;">{{comment.nickName}}</span>
+                      </div>
                       <div class="baseInfo">
-                        <span>{{moment.year}}年 - {{moment.educationDesc}} - {{moment.currentCity}} - {{moment.career}}</span>
+                        <span>{{comment.year}}年 - {{comment.educationDesc}} - {{comment.currentCity}} - {{comment.career}}</span>
                       </div>
                     </div>
                   </div>
@@ -298,21 +305,39 @@ export default {
     },
     async likeMoment(moment) {
       var res = await this.$http.patch("Moment/LikeOrNot/" + moment.id);
-      if (res)
-        //点赞成功
+      if (res && !moment.currentUserLike) {
         moment.currentUserLike = true;
+        moment.likeCount += 1;
+      } else if (res && moment.currentUserLike) {
+        moment.currentUserLike = false;
+        moment.likeCount -= 1;
+      }
     },
     redirect(path) {
       this.$router.push(path);
     },
     //展开评论
-    unfoldComment(momentId) {
-      this.moments.forEach((moment) => {
-        if (moment.id === momentId) {
-          moment.unfoldComment = !moment.unfoldComment;
-          return;
-        }
+    async unfoldComment(moment) {
+      moment.commentQueryInfo = {
+        pageIndex: 1,
+        pageSize: 10,
+        momentId: moment.id,
+      };
+      var res = await this.$http.get("Comment", {
+        params: moment.commentQueryInfo,
       });
+      moment.comments = res.data.items;
+      moment.commentQueryInfo.totalCount = res.data.total;
+      
+      
+      var res = await this.$http.get("Comment", {
+        params: moment.commentQueryInfo,
+      });
+      
+      
+      moment.unfoldComment = !moment.unfoldComment;
+
+
     },
     //选择分类
     chooseTitle(index) {
@@ -489,8 +514,15 @@ export default {
         }
       }
     }
+    .time {
+      margin: 10px 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #999999;
+    }
     .bottom {
-      margin: 20px 0 0 0;
+      margin: 15px 0 0 0;
       width: 580px;
       display: flex;
       justify-content: space-between;
@@ -607,7 +639,7 @@ export default {
     font-size: 16px;
   }
   .fontIcon:hover {
-    color: #e6a23c;
+    color: #ff7777;
   }
 }
 
