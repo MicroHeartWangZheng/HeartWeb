@@ -41,7 +41,7 @@
 
       <!--动态列表--->
       <div class="momentList borderRadius">
-        <div class="momentItem borderRadius" v-for="(moment,index) in moments" :key="index">
+        <div class="momentItem borderRadius" v-for="(moment,momentIndex) in moments" :key="momentIndex">
           <!--用户信息-->
           <div class="top pointer">
             <el-avatar class="headPic" shape="square" :src="moment.headPic"></el-avatar>
@@ -62,7 +62,7 @@
               {{moment.content}}
             </div>
             <div class="pics">
-              <el-image fit="cover" v-for="(pic,index) in moment.pictures" :key="index" :src="pic" :preview-src-list="moment.pictures"></el-image>
+              <el-image fit="cover" v-for="(pic,picIndex) in moment.pictures" :key="picIndex" :src="pic" :preview-src-list="moment.pictures"></el-image>
             </div>
             <div class="time">
               <span>{{moment.time}}</span>
@@ -74,7 +74,7 @@
                 <div v-else class="fa fa-heart redColor"></div>
                 <div class="count">{{moment.likeCount}}</div>
               </div>
-              <div class="bottomItem" @click="unfoldComment(moment)">
+              <div class="bottomItem" @click="unfoldComment(moment,momentIndex)">
                 <div class="el-icon-chat-dot-round"></div>
                 <div class="count">{{moment.commentCount}}</div>
               </div>
@@ -101,7 +101,7 @@
               </div>
               <div class="line"></div>
               <!--评论-->
-              <div class="commentItem" v-for="(comment,index) in moment.comments" :key="index">
+              <div class="commentItem" v-for="(comment,commentIndex) in moment.comments" :key="commentIndex">
                 <div class="commentTop">
                   <div class="topLeft pointer">
                     <el-avatar class="commentHeadPic" shape="circle" :src="comment.headPic"></el-avatar>
@@ -128,34 +128,41 @@
                     <el-tooltip effect="dark" content="投诉" placement="top">
                       <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(comment.userId,comment.nickName,comment.content)"></span>
                     </el-tooltip>
-                    <el-tooltip effect="dark" content="评论" placement="top">
-                      <div class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment.nickName)"></div>
+                    <el-tooltip effect="dark" content="回复" placement="top">
+                      <span class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment)"></span>
                     </el-tooltip>
-                    <el-tooltip effect="dark" content="点赞" placement="top">
-                      <div v-if="!comment.like" class="fa fa-heart-o fontIcon"></div>
-                      <div v-else class="fa fa-heart redColor fontIcon"></div>
-                    </el-tooltip>
+                    <div @click="likeComment(comment,momentIndex,commentIndex)">
+                      <el-tooltip effect="dark" content="点赞" placement="top">
+                        <span v-if="comment.currentUserLike" class="fa fa-heart redColor fontIcon"></span>
+                        <span v-else class="fa fa-heart-o fontIcon"></span>
+                      </el-tooltip>
+                      <span style="margin-left:4px;line-height:16px;">{{comment.likeCount}}</span>
+                    </div>
                   </div>
                 </div>
 
                 <!--回复-->
-                <div class="replyItem" v-for="(reply,index) in comment.replys" :key="index">
+                <div class="replyItem" v-for="(reply,index) in comment.replies" :key="index">
                   <div class="replyTop">
                     <div class="replyTopLeft pointer">
                       <el-avatar class="replyHeadPic" shape="circle" :src="reply.headPic"></el-avatar>
                       <div class="title">
                         <div class="nickName">{{reply.nickName}}</div>
                         <div class="baseInfo">
-                          <span>{{reply.year}}年 -</span>
-                          <span>{{reply.education}} -</span>
-                          <span>{{reply.currentCity}} -</span>
-                          <span>{{reply.work}}</span>
+                          <span>{{reply.year}}年 - {{reply.educationDesc}} - {{reply.currentCity}} - {{reply.career}}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="replyContent">
-                    {{reply.content}}
+                    <span>
+                      <span>回复</span>
+                      <span>
+                        <el-link :href="'userDetail/'+reply.userId" :underline="false" type="primary">{{reply.toUserNickName}}</el-link>
+                      </span>
+                      <span>：</span>
+                    </span>
+                    <span>{{reply.content}}</span>
                   </div>
                   <div class="commentBottom">
                     <div class="bottomLeft">
@@ -166,7 +173,7 @@
                         <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(reply.userId,reply.nickName,reply.content)"></span>
                       </el-tooltip>
                       <el-tooltip effect="dark" content="评论" placement="top">
-                        <div class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment.nickName)"></div>
+                        <div class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment,reply)"></div>
                       </el-tooltip>
                       <el-tooltip effect="dark" content="点赞" placement="top">
                         <div v-if="!reply.like" class="fa fa-heart-o fontIcon"></div>
@@ -175,10 +182,12 @@
                     </div>
                   </div>
                 </div>
+                <!--查看更多-->
+                <el-link v-if="comment.replyCount>3" style="margin-left:100px;">共{{comment.replyCount}}条回复</el-link>
               </div>
               <!--查看更多-->
               <div class="line"></div>
-              <div class="more pointer">
+              <div v-if="moment.commentCount>10" class="more pointer">
                 查看更多 >
               </div>
             </div>
@@ -213,9 +222,9 @@
     </div>
     <!--回复对话框-->
     <el-dialog class="dialog" :title="'回复@'+replyDialog.userName" :visible.sync="replyDialog.visible" width="30%">
-      <el-input type="textarea" placeholder="发布你的回复" :rows="3" maxlength="500" v-model="replyDialog.content"></el-input>
+      <el-input type="textarea" :rows="3" maxlength="500" v-model="replyDialog.content"></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" style="border:none" @click="replyDialog.visible = false">发 布</el-button>
+        <el-button type="primary" style="border:none" @click="addReply">回 复</el-button>
       </span>
     </el-dialog>
 
@@ -255,8 +264,10 @@ export default {
       //回复对话框
       replyDialog: {
         visible: false,
-        userName: "",
-        content: "",
+        userName: null,
+        content: null,
+        commentId: null,
+        replyId: null,
       },
       //投诉对话框
       complaintDialog: {
@@ -303,21 +314,7 @@ export default {
       this.moments = res.data.items;
       this.totalCount = res.data.total;
     },
-    async likeMoment(moment) {
-      var res = await this.$http.patch("Moment/LikeOrNot/" + moment.id);
-      if (res && !moment.currentUserLike) {
-        moment.currentUserLike = true;
-        moment.likeCount += 1;
-      } else if (res && moment.currentUserLike) {
-        moment.currentUserLike = false;
-        moment.likeCount -= 1;
-      }
-    },
-    redirect(path) {
-      this.$router.push(path);
-    },
-    //展开评论
-    async unfoldComment(moment) {
+    async getCommentList(moment, momentIndex) {
       moment.commentQueryInfo = {
         pageIndex: 1,
         pageSize: 10,
@@ -328,25 +325,83 @@ export default {
       });
       moment.comments = res.data.items;
       moment.commentQueryInfo.totalCount = res.data.total;
-      
-      
-      var res = await this.$http.get("Comment", {
-        params: moment.commentQueryInfo,
+      Object.assign(this.moments[momentIndex], moment);
+    },
+    //展开更多时
+    async getReplyList(comment) {
+      comment.replyQueryInfo = {
+        pageIndex: 1,
+        pageSize: 10,
+        commentId: comment.id,
+      };
+      var res = await this.$http.get("Reply", {
+        params: comment.replyQueryInfo,
       });
-      
-      
+      comment.replys = res.data.items;
+      comment.replyQueryInfo.totalCount = res.data.total;
+    },
+    async likeMoment(moment) {
+      var res = await this.$http.patch("Moment/LikeOrNot/" + moment.id);
+      if (res && !moment.currentUserLike) {
+        moment.currentUserLike = true;
+        moment.likeCount += 1;
+      } else if (res && moment.currentUserLike) {
+        moment.currentUserLike = false;
+        moment.likeCount -= 1;
+      }
+    },
+    async likeComment(comment, momentIndex, commentIndex) {
+      var res = await this.$http.patch("Comment/LikeOrNot/" + comment.id);
+      if (res && !comment.currentUserLike) {
+        comment.currentUserLike = true;
+        comment.likeCount += 1;
+      } else if (res && comment.currentUserLike) {
+        comment.currentUserLike = false;
+        comment.likeCount -= 1;
+      }
+      comment.likeCount = 1;
+      // Object.assign(this.moments[momentIndex].comments[commentIndex], comment);
+      this.$set(
+        this.moments[momentIndex].comments[commentIndex],
+        "likeCount",
+        10
+      );
+      console.log("comment", this.moments[momentIndex].comments[commentIndex]);
+    },
+    async addReply() {
+      var data = {
+        commentId: this.replyDialog.commentId,
+        content: this.replyDialog.content,
+        replyId: this.replyDialog.replyId,
+      };
+      var res = await this.$http.post("Reply", data);
+      if (res) {
+        this.replyDialog.visible = false;
+        this.replyDialog.content = null;
+      }
+    },
+    redirect(path) {
+      this.$router.push(path);
+    },
+    //展开评论
+    async unfoldComment(moment, momentIndex) {
+      if (!moment.unfoldComment) {
+        await this.getCommentList(moment, momentIndex);
+      }
       moment.unfoldComment = !moment.unfoldComment;
-
-
     },
     //选择分类
     chooseTitle(index) {
       this.currentIndex = index;
     },
     //点击评论
-    clickReply(nickName) {
+    clickReply(comment, reply) {
       this.replyDialog.visible = true;
-      this.replyDialog.userName = nickName;
+      this.replyDialog.userName = comment.nickName;
+      this.replyDialog.commentId = comment.id;
+      if (reply) {
+        this.replyDialog.replyId = reply.id;
+      }
     },
     //点击投诉
     clickComplaint(userId, nickName, commentContent) {
@@ -474,6 +529,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
+
   .momentItem {
     padding: 20px 20px 14px 14px;
     background-color: #fff;
