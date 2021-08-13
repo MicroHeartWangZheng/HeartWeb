@@ -16,14 +16,12 @@
             <el-upload id="upload" :on-success="uploadSuccess" action="https://localhost/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
               <i class="fa fa-picture-o pointer"></i>
             </el-upload>
-            <el-dropdown class="topic pointer">
-              <span class="el-dropdown-link">
-                #话题<i class="el-icon-arrow-down el-icon--right"></i>
+            <el-dropdown class="pointer" @command="chooseTopic">
+              <span class="link">
+                #{{choosedTopic.name}}<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>#黄金糕</el-dropdown-item>
-                <el-dropdown-item>#狮子头</el-dropdown-item>
-                <el-dropdown-item>#螺蛳粉</el-dropdown-item>
+                <el-dropdown-item :command="topic" v-for="(topic,index) in topics" :key="index">#{{topic.name}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -66,7 +64,7 @@
             </div>
             <div class="time">
               <span>{{moment.time}}</span>
-              <span>#单身狗的生活#</span>
+              <span class="link">#{{moment.topicName}}#</span>
             </div>
             <div class="bottom">
               <div class="bottomItem" @click="likeMoment(moment,momentIndex)">
@@ -122,7 +120,7 @@
                 </div>
                 <div class="commentBottom">
                   <div class="bottomLeft">
-                    <div>{{comment.createTime}}</div>
+                    <div>{{comment.time}}</div>
                   </div>
                   <div class="bottomRight">
                     <el-tooltip effect="dark" content="投诉" placement="top">
@@ -136,7 +134,7 @@
                         <span v-if="comment.currentUserLike" class="fa fa-heart redColor fontIcon"></span>
                         <span v-else class="fa fa-heart-o fontIcon"></span>
                       </el-tooltip>
-                      <span style="margin-left:4px;line-height:16px;">{{comment.likeCount}}</span>
+                      <span v-if="comment.likeCount>0" style="margin-left:4px;line-height:16px;">{{comment.likeCount}}</span>
                     </div>
                   </div>
                 </div>
@@ -148,12 +146,12 @@
                       <el-avatar class="replyHeadPic" shape="circle" :src="reply.headPic"></el-avatar>
                       <div class="title">
                         <div>
-                          <span v-if="comment.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
+                          <span v-if="reply.gender" class="fa fa-venus" style="margin-right:10px;color:blue;font-weight:700"></span>
                           <span v-else class="fa fa-mars" style="margin-right:10px;color:#ff6666;font-weight:700"></span>
-                          <span style="font-size:14px;color:#ff6666;font-weight:700;">{{comment.nickName}}</span>
+                          <span style="font-size:14px;color:#ff6666;font-weight:700;">{{reply.nickName}}</span>
                         </div>
                         <div class="baseInfo">
-                          <span>{{comment.year}}年 - {{comment.educationDesc}} - {{comment.currentCity}} - {{comment.career}}</span>
+                          <span>{{reply.year}}年 - {{reply.educationDesc}} - {{reply.currentCity}} - {{reply.career}}</span>
                         </div>
                       </div>
                     </div>
@@ -161,8 +159,8 @@
                   <div class="replyContent">
                     <span>
                       <span>回复</span>
-                      <span>
-                        <el-link @click="redirect('/userDetail/'+reply.toUserId)" :underline="false" type="primary">{{reply.toUserNickName}}</el-link>
+                      <span class="link pointer" @click="redirect('/userDetail/'+reply.toUserId)">
+                        {{reply.toUserNickName}}
                       </span>
                       <span>：</span>
                     </span>
@@ -170,7 +168,7 @@
                   </div>
                   <div class="commentBottom">
                     <div class="bottomLeft">
-                      <div>{{reply.createTime}}</div>
+                      <div>{{reply.time}}</div>
                     </div>
                     <div class="bottomRight">
                       <el-tooltip effect="dark" content="投诉" placement="top">
@@ -208,25 +206,10 @@
       <div class="topicTitle">
         <span>话题</span>
       </div>
-      <div>
+      <div v-for="(topic,index) in topics" :key="index">
         <span>#</span>
         <span>话题</span>
-        <span>#热门话题1#</span>
-      </div>
-      <div>
-        <span>#</span>
-        <span>话题</span>
-        <span>#热门话题2#</span>
-      </div>
-      <div>
-        <span>#</span>
-        <span>话题</span>
-        <span>#热门话题3#</span>
-      </div>
-      <div>
-        <span>#</span>
-        <span>话题</span>
-        <span>#热门话题4#</span>
+        <span class="link" @click="clickTopic(topic.id)">#{{topic.name}}#</span>
       </div>
     </div>
     <!--回复对话框-->
@@ -255,15 +238,21 @@ export default {
     return {
       user: {},
       moments: [],
+      topics: [],
+      choosedTopic: {},
       queryInfo: {
         pageIndex: 1,
-        pageSize: 3,
+        pageSize: 10,
+        topicId: null,
+        orderBy: "hot",
+        isFollow: false,
+        isNearby: false,
       },
       totalCount: 0,
       currentIndex: 1,
       //发布动态
       moment: {
-        topic: null,
+        topicId: null,
         content: null,
         pictures: [],
         anonymous: false, //是否匿名
@@ -349,6 +338,17 @@ export default {
       this.replyDialog.content = null;
       await this.getReplyList(this.replyDialog.comment, 1);
     },
+    async getTopicList() {
+      var params = {
+        pageIndex: 1,
+        pageSize: 10,
+      };
+      var res = await this.$http.get("Topic", { params: params });
+      if (!res) return;
+      this.topics = res.data.items;
+      this.choosedTopic = this.topics[0];
+      this.moment.topicId = this.choosedTopic.id;
+    },
     async getMomentList() {
       var res = await this.$http.get("Moment", {
         params: this.queryInfo,
@@ -388,7 +388,6 @@ export default {
       });
       if (pageIndex == 1) moment.comments = res.data.items;
       else moment.comments = moment.comments.concat(res.data.items);
-      moment.commentQueryInfo.totalCount = res.data.total;
     },
     //展开更多时
     async getReplyList(comment, pageIndex) {
@@ -399,7 +398,6 @@ export default {
       });
       if (pageIndex == 1) comment.replies = res.data.items;
       else comment.replies = comment.replies.concat(res.data.items);
-      comment.replyQueryInfo.totalCount = res.data.total;
     },
     async likeMoment(moment) {
       var res = await this.$http.patch("Moment/LikeOrNot/" + moment.id);
@@ -435,10 +433,25 @@ export default {
       console.log("path", path);
       this.$router.push(path);
     },
-
     //选择分类
     chooseTitle(index) {
       this.currentIndex = index;
+      if (index == 1) this.queryInfo.orderBy = "hot";
+      //热门
+      else if (index == 2) this.queryInfo.orderBy = "time";
+      //实时
+      else if (index == 3) this.queryInfo.isFollow = true;
+      //关注
+      else this.queryInfo.isNearby = true; //附近
+      this.getMomentList();
+    },
+    //点击话题 展示话题下的动态
+    changeQueryInfo(topicId) {
+      if (topicId) this.queryInfo.topicId = topicId;
+    },
+    chooseTopic(topic) {
+      this.choosedTopic = topic;
+      this.moment.topicId = topic.id;
     },
     //点击评论
     clickReply(comment, reply) {
@@ -470,10 +483,23 @@ export default {
       if (!res) return;
       this.user = res.data;
     },
+    getLocation() {
+      console.log("开始了");
+      if (navigator.geolocation) {
+        console.log("通过");
+        navigator.geolocation.getCurrentPosition(function (position) {
+          console.log("position", position);
+        });
+      } else {
+        console.log("获取地理位置报错");
+      }
+    },
   },
   mounted() {
     this.getMomentList();
     this.getUser();
+    this.getTopicList();
+    this.getLocation();
   },
   created() {},
 };
@@ -525,16 +551,20 @@ export default {
       height: 26px;
       .left {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
-        width: 100px;
+
+        #upload {
+          margin-right: 10px;
+        }
         .fa-picture-o:hover {
           background-color: #fff2e5;
           color: #ff8200;
         }
+        .el-dropdown {
+          margin-right: 10px;
+        }
         .el-dropdown-link:hover {
-          color: #ff8200;
-          font-weight: 700;
         }
       }
       .right {
@@ -623,7 +653,7 @@ export default {
       }
     }
     .time {
-      margin: 10px 8px;
+      margin: 10px 0px;
       display: flex;
       justify-content: space-between;
       font-size: 10px;
@@ -704,9 +734,8 @@ export default {
           }
         }
         .replyContent {
-          display: flex;
-          justify-content: flex-start;
           padding: 0px 20px 10px 50px;
+          line-height: 1.5;
         }
       }
     }
@@ -724,6 +753,13 @@ export default {
   }
 }
 
+.link {
+  color: #409eff;
+}
+.link:hover {
+  color: #66b1ff;
+  font-weight: 700;
+}
 /*  加粗标题 */
 .chooseTitle {
   font-weight: 700;

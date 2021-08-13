@@ -113,8 +113,6 @@ export default {
     },
     async getUserList() {
       var url = this.user.vip ? "User/GetListForVIP" : "User/GetList";
-      console.log("vip", this.user.vip);
-      console.log("url", url);
       const res = await this.$http.get(url, { params: this.queryInfo });
       this.users = res.data.items;
       this.totalCount = res.data.total;
