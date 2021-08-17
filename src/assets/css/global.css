@@ -78,6 +78,10 @@ body,
     border-radius: 8px;
 }
 
- .el-pager>li{
+.el-pager>li {
     background-color: #ff6666;
+}
+
+.br {
+    white-space: pre-wrap;
 }

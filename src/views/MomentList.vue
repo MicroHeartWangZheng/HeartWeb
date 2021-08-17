@@ -56,15 +56,13 @@
           </div>
           <!--动态-->
           <div class="content">
-            <div class="desc">
-              {{moment.content}}
-            </div>
+            <div class="desc br">{{moment.content}}</div>
             <div class="pics">
               <el-image fit="cover" v-for="(pic,picIndex) in moment.pictures" :key="picIndex" :src="pic" :preview-src-list="moment.pictures"></el-image>
             </div>
             <div class="time">
               <span>{{moment.time}}</span>
-              <span class="link">#{{moment.topicName}}#</span>
+              <span class="link pointer" @click="clickTopic(moment.topicId)">#{{moment.topicName}}#</span>
             </div>
             <div class="bottom">
               <div class="bottomItem" @click="likeMoment(moment,momentIndex)">
@@ -115,9 +113,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="commentContent">
-                  {{comment.content}}
-                </div>
+                <div class="commentContent br">{{comment.content}}</div>
                 <div class="commentBottom">
                   <div class="bottomLeft">
                     <div>{{comment.time}}</div>
@@ -202,11 +198,12 @@
         </div>
       </div>
     </div>
+    <!--话题-->
     <div class="topicContainer">
       <div class="topicTitle">
         <span>话题</span>
       </div>
-      <div v-for="(topic,index) in topics" :key="index">
+      <div class="pointer" v-for="(topic,index) in topics" :key="index">
         <span>#</span>
         <span>话题</span>
         <span class="link" @click="clickTopic(topic.id)">#{{topic.name}}#</span>
@@ -434,20 +431,35 @@ export default {
       this.$router.push(path);
     },
     //选择分类
-    chooseTitle(index) {
+    async chooseTitle(index) {
       this.currentIndex = index;
-      if (index == 1) this.queryInfo.orderBy = "hot";
-      //热门
-      else if (index == 2) this.queryInfo.orderBy = "time";
-      //实时
-      else if (index == 3) this.queryInfo.isFollow = true;
-      //关注
-      else this.queryInfo.isNearby = true; //附近
-      this.getMomentList();
+      if (index == 1) {
+        //热门
+        this.queryInfo.orderBy = "hot";
+        this.queryInfo.isFollow = false;
+        this.queryInfo.isNearby = false;
+      } else if (index == 2) {
+        //实时
+        this.queryInfo.orderBy = "time";
+        this.queryInfo.isFollow = false;
+        this.queryInfo.isNearby = false;
+      } else if (index == 3) {
+        //关注
+        this.queryInfo.orderBy = null;
+        this.queryInfo.isFollow = true;
+        this.queryInfo.isNearby = false;
+      } else {
+        //附近
+        this.queryInfo.orderBy = null;
+        this.queryInfo.isFollow = false;
+        this.queryInfo.isNearby = true;
+      }
+      await this.getMomentList();
     },
     //点击话题 展示话题下的动态
-    changeQueryInfo(topicId) {
+    async clickTopic(topicId) {
       if (topicId) this.queryInfo.topicId = topicId;
+      await this.getMomentList();
     },
     chooseTopic(topic) {
       this.choosedTopic = topic;
@@ -564,8 +576,6 @@ export default {
         .el-dropdown {
           margin-right: 10px;
         }
-        .el-dropdown-link:hover {
-        }
       }
       .right {
         padding: 0px 15px;
@@ -624,7 +634,7 @@ export default {
     display: flex;
     justify-content: flex-start;
     height: 50px;
-    margin-bottom: 6px;
+    // margin-bottom: 6px;
     .headPic {
       width: 50px;
       height: 50px;
@@ -636,12 +646,12 @@ export default {
       line-height: 1.5;
       font-size: 14px;
     }
+
     .pics {
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-
       .el-image {
         margin: 8px 5px 0 5px;
         height: 188px;
@@ -664,19 +674,19 @@ export default {
       width: 580px;
       display: flex;
       justify-content: space-between;
-    }
-    .bottomItem {
-      display: flex;
-      justify-content: flex-start;
-      color: grey;
-      .count {
-        font-size: 12px;
-        line-height: 16px;
-        margin-left: 4px;
+      .bottomItem {
+        display: flex;
+        justify-content: flex-start;
+        color: grey;
+        .count {
+          font-size: 12px;
+          line-height: 16px;
+          margin-left: 4px;
+        }
       }
-    }
-    .bottomItem:hover {
-      color: #ff7777;
+      .bottomItem:hover {
+        color: #ff7777;
+      }
     }
   }
   .commentContainer {
@@ -752,7 +762,10 @@ export default {
     }
   }
 }
-
+/deep/ .desc > textarea {
+  border: none;
+  resize: none;
+}
 .link {
   color: #409eff;
 }
