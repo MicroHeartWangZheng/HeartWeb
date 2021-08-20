@@ -6,16 +6,15 @@
         <div class="titleContainer">
           <span @click="redirect('/users')">用户列表</span>
           <span @click="redirect('/momentlist')">动态</span>
-          <!-- <span @click="redirect('/wantlist')">列表</span> -->
+           <span @click="redirect('/followlist')">关注列表</span>
           <el-dropdown @command="handleCommand">
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="fa fa-id-card" command="/my">我的主页</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-eye" command="wantList">申请列表
+              <el-dropdown-item icon="fa fa-heartbeat" command="wantList">申请列表
                 <el-badge v-if="newWantCount!=0" class="mark" :value="newWantCount" />
               </el-dropdown-item>
-              <el-dropdown-item icon="fa fa-eye" command="/followlist">关注列表</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-eye" command="lookList">来访列表
+              <el-dropdown-item icon="fa fa-clock-o" command="lookList">来访列表
                 <el-badge v-if="newVisitorCount!=0" class="mark" :value="newVisitorCount" />
               </el-dropdown-item>
               <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
@@ -149,14 +148,17 @@ export default {
 }
 .contentContainer {
   background-color: #f2f2f2;
+   min-height:850px;
 }
 .content {
   width: 1000px;
+
   margin: auto;
   padding-bottom: 20px;
 }
 
 .bottomContainer {
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;

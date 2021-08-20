@@ -296,6 +296,7 @@ export default {
       this.moment.content = null;
       this.moment.pictures = [];
       await this.getMomentList();
+
       this.$message({
         message: "发布成功!",
         type: "success",
@@ -468,8 +469,8 @@ export default {
     //点击话题 展示话题下的动态
     async clickTopic(topicId) {
       if (topicId) this.queryInfo.topicId = topicId;
-      this.moments=[];
-      this.queryInfo.pageIndex=1;
+      this.moments = [];
+      this.queryInfo.pageIndex = 1;
       await this.getMomentList();
     },
     chooseTopic(topic) {
@@ -495,7 +496,9 @@ export default {
     uploadSuccess(response, file, fileList) {
       this.moment.pictures = [];
       fileList.forEach((file) => {
-        this.moment.pictures.push("http://www.yinxingguo.love" + file.response.data);
+        this.moment.pictures.push(
+          "http://www.yinxingguo.love" + file.response.data
+        );
       });
     },
     removePic(index) {

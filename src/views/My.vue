@@ -79,7 +79,7 @@
             <span>家庭背景</span>
           </div>
           <div class="descContent">
-            <div v-if="!editDesc">{{introduction.homeIntroduce}}</div>
+            <div class="br" v-if="!editDesc">{{introduction.homeIntroduce}}</div>
             <el-input v-else type="textarea" placeholder="家庭背景" v-model="introduction.homeIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
@@ -89,7 +89,7 @@
             <span>理想另一半</span>
           </div>
           <div class="descContent">
-            <div v-if="!editDesc">{{introduction.halfIntroduce}}</div>
+            <div class="br" v-if="!editDesc">{{introduction.halfIntroduce}}</div>
             <el-input v-else type="textarea" placeholder="理想另一半" v-model="introduction.halfIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>

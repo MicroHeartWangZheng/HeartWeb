@@ -28,16 +28,16 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-cascader :props="{ checkStrictly: true }" :value="[queryInfo.homeProvince,queryInfo.homeCity]" :options="regions" placeholder="出生地" @change="chooseHome"> </el-cascader>
+          <el-cascader clearable :props="{ checkStrictly: true }" :value="[queryInfo.homeProvince,queryInfo.homeCity]" :options="regions" placeholder="出生地" @change="chooseHome"> </el-cascader>
         </el-col>
         <el-col :span="4">
-          <el-cascader :props="{ checkStrictly: true }" :value="[queryInfo.currentProvince,queryInfo.currentCity]" :options="regions" placeholder="所在地" @change="chooseCurrent"></el-cascader>
+          <el-cascader clearable :props="{ checkStrictly: true }" :value="[queryInfo.currentProvince,queryInfo.currentCity]" :options="regions" placeholder="所在地" @change="chooseCurrent"></el-cascader>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="4">
-          <el-select v-model="queryInfo.education" placeholder="学历">
+          <el-select clearable v-model="queryInfo.education" placeholder="学历">
             <el-option v-for="(value,key) in educationTypes" :key="key" :label="value" :value="key*1"></el-option>
           </el-select>
         </el-col>

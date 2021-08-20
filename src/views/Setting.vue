@@ -70,29 +70,21 @@ export default {
   methods: {
     async getDetail() {
       const res = await this.$http.get("User");
-      console.log("resDetail", res);
       this.setting = JSON.parse(res.data.setting);
       this.state = res.data.state;
     },
     async submit() {
+      //设置状态
+      await this.$http.put("User/UpdateState?state="+this.state);
+      //隐私设置
       const res = await this.$http.put("User/Setting", this.setting);
-      console.log("setting", res);
+      if (!res) return;
+      this.$message({
+        message: "设置成功!",
+        type: "success",
+      });
     },
-    updateState() {
-      const res = this.$http.put(this.state);
-    },
-
     stateChange(chooseValue) {
-      console.log("choose", chooseValue);
-      switch (chooseValue) {
-        case 1:
-          break;
-        case 2:
-          break;
-        case 3:
-        case 4:
-          break;
-      }
       this.state = chooseValue;
     },
   },
