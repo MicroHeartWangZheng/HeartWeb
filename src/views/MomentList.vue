@@ -13,7 +13,7 @@
         </div>
         <div class="bottom">
           <div class="left">
-            <el-upload id="upload" :on-success="uploadSuccess" action="https://localhost/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
+            <el-upload id="upload" :on-success="uploadSuccess" action="http://www.yinxingguo.love/api/File/Upload" :multiple="true" :limit="9" :show-file-list="false">
               <i class="fa fa-picture-o pointer"></i>
             </el-upload>
             <el-dropdown class="pointer" @command="chooseTopic">
@@ -61,7 +61,7 @@
               <el-image fit="cover" v-for="(pic,picIndex) in moment.pictures" :key="picIndex" :src="pic" :preview-src-list="moment.pictures"></el-image>
             </div>
             <div class="time">
-              <span>{{moment.time}}</span>
+              <span>{{moment.location+"  "+moment.time}}</span>
               <span class="link pointer" @click="clickTopic(moment.topicId)">#{{moment.topicName}}#</span>
             </div>
             <div class="bottom">
@@ -229,6 +229,7 @@
   </div>
 
 </template>
+
 <script>
 export default {
   data() {
@@ -239,11 +240,11 @@ export default {
       choosedTopic: {},
       queryInfo: {
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 5,
         topicId: null,
         orderBy: "hot",
         isFollow: false,
-        isNearby: false,
+        location: null,
       },
       totalCount: 0,
       currentIndex: 1,
@@ -253,8 +254,8 @@ export default {
         content: null,
         pictures: [],
         anonymous: false, //是否匿名
-        address: null,
-        location: null,
+        address: null, //详细地址
+        location: null, //位置
         latitude: null,
         longitude: null,
       },
@@ -347,6 +348,10 @@ export default {
       this.moment.topicId = this.choosedTopic.id;
     },
     async getMomentList() {
+      if (this.moments.length >= this.totalCount && this.totalCount != 0) {
+        console.log("不需要查询");
+        return;
+      }
       var res = await this.$http.get("Moment", {
         params: this.queryInfo,
       });
@@ -360,8 +365,10 @@ export default {
           momentId: moment.id,
         };
       });
-      this.moments = res.data.items;
+      if (this.queryInfo.pageIndex == 1) this.moments = res.data.items;
+      else this.moments = this.moments.concat(res.data.items);
       this.totalCount = res.data.total;
+      this.queryInfo.pageIndex++;
     },
     //展开评论
     async unfoldComment(moment) {
@@ -437,28 +444,32 @@ export default {
         //热门
         this.queryInfo.orderBy = "hot";
         this.queryInfo.isFollow = false;
-        this.queryInfo.isNearby = false;
+        this.queryInfo.location = null;
       } else if (index == 2) {
         //实时
         this.queryInfo.orderBy = "time";
         this.queryInfo.isFollow = false;
-        this.queryInfo.isNearby = false;
+        this.queryInfo.location = null;
       } else if (index == 3) {
         //关注
         this.queryInfo.orderBy = null;
         this.queryInfo.isFollow = true;
-        this.queryInfo.isNearby = false;
+        this.queryInfo.location = null;
       } else {
         //附近
         this.queryInfo.orderBy = null;
         this.queryInfo.isFollow = false;
-        this.queryInfo.isNearby = true;
+        this.queryInfo.location = this.moment.location;
       }
+      this.queryInfo.pageIndex = 1;
+      this.moments = [];
       await this.getMomentList();
     },
     //点击话题 展示话题下的动态
     async clickTopic(topicId) {
       if (topicId) this.queryInfo.topicId = topicId;
+      this.moments=[];
+      this.queryInfo.pageIndex=1;
       await this.getMomentList();
     },
     chooseTopic(topic) {
@@ -484,7 +495,7 @@ export default {
     uploadSuccess(response, file, fileList) {
       this.moment.pictures = [];
       fileList.forEach((file) => {
-        this.moment.pictures.push("https://localhost" + file.response.data);
+        this.moment.pictures.push("http://www.yinxingguo.love" + file.response.data);
       });
     },
     removePic(index) {
@@ -496,24 +507,33 @@ export default {
       this.user = res.data;
     },
     getLocation() {
-      console.log("开始了");
-      if (navigator.geolocation) {
-        console.log("通过");
-        navigator.geolocation.getCurrentPosition(function (position) {
-          console.log("position", position);
-        });
-      } else {
-        console.log("获取地理位置报错");
+      let location = new BMap.Geolocation();
+      location.getCurrentPosition((position) => {
+        if (!position) return;
+        this.moment.location = position.address.city;
+        this.moment.address = position.address.street;
+        this.moment.latitude = position.latitude;
+        this.moment.longitude = position.longitude;
+      });
+    },
+    async pullDown() {
+      if (
+        document.documentElement.scrollTop + window.innerHeight ==
+        document.documentElement.scrollHeight
+      ) {
+        await this.getMomentList();
       }
     },
   },
   mounted() {
+    window.addEventListener("scroll", this.pullDown);
+  },
+  created() {
     this.getMomentList();
     this.getUser();
     this.getTopicList();
     this.getLocation();
   },
-  created() {},
 };
 </script>
 <style lang="less" scoped>
@@ -663,7 +683,7 @@ export default {
       }
     }
     .time {
-      margin: 10px 0px;
+      margin: 20px 0px;
       display: flex;
       justify-content: space-between;
       font-size: 10px;

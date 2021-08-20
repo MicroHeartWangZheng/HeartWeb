@@ -26,15 +26,10 @@ const router = new VueRouter({
     },
     {
       path: '/login',
-      component: Login
-    },
-    {
-      path: '/register',
-      component: Register
-    },
-    {
-      path: '/findpassword',
-      component: FindPassword
+      component: Login,
+      meta: {
+        title: '登录'
+      }
     },
     {
       path: '/home',
@@ -43,50 +38,86 @@ const router = new VueRouter({
       children: [{
           path: '/users',
           component: Users,
+          meta: {
+            title: '用户列表'
+          }
         },
         {
           path: '/wantlist',
           component: WantList,
+          meta: {
+            title: '申请列表'
+          }
         },
         {
           path: '/followlist',
           component: FollowList,
+          meta: {
+            title: '关注列表'
+          }
         },
         {
           path: '/looklist',
           component: LookList,
+          meta: {
+            title: '来访列表'
+          }
         },
         {
           path: '/my',
           component: My,
+          meta: {
+            title: '我的主页'
+          }
         },
         {
           path: '/userdetail/:id',
           component: UserDetail,
+          meta: {
+            title: '用户资料'
+          }
         },
         {
           path: '/vip',
           component: Vip,
+          meta: {
+            title: '购买VIP'
+          }
         },
         {
           path: '/setting',
           component: Setting,
+          meta: {
+            title: '设置'
+          }
         },
         {
           path: '/orderlist',
           component: OrderList,
+          meta: {
+            title: '订单列表'
+          }
         },
         {
           path: '/momentlist',
           component: MomentList,
+          meta: {
+            title: '动态列表'
+          }
         },
         {
           path: '/SetpOne',
-          component: SetpOne
+          component: SetpOne,
+          meta: {
+            title: '完善资料'
+          }
         },
         {
           path: '/UpdatePictures',
-          component: UpdatePictures
+          component: UpdatePictures,
+          meta: {
+            title: '上传图片'
+          }
         }
       ]
     },

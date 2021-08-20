@@ -102,7 +102,7 @@
                 <div @click="deletePic(index)">删除</div>
               </div>
             </div>
-            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="https://localhost/api/File/Upload">
+            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="http://www.yinxingguo.love/api/File/Upload">
               <div class="picItem pointer">
                 <i class="el-icon-plus"></i>
               </div>
@@ -131,7 +131,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">身份证照片</div>
-                <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
+                <el-upload action="http://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadIdPicSuccess">
                   <el-tag v-if="user.idCardPicFileName">{{user.idCardPicFileName}}</el-tag>
                   <el-tag v-else-if="user.idCardPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
@@ -177,7 +177,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">证明图片<span style="color:#b5b4b4;font-size:12px;">(钉钉/微信/合同)</span></div>
-                <el-upload action="https://localhost/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
+                <el-upload action="http://www.yinxingguo.love/api/File/Upload" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
                   <el-tag v-if="user.companyPicFileName">{{user.companyPicFileName}}</el-tag>
                   <el-tag v-else-if="user.companyPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
@@ -489,7 +489,7 @@ export default {
       return res ? true : false;
     },
     uploadPicture(response, file, fileList) {
-      this.pictures.push("https://localhost" + file.response.data);
+      this.pictures.push("http://www.yinxingguo.love" + file.response.data);
     },
     //点击 放大图片
     bigPicture(file) {

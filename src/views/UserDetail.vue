@@ -72,23 +72,21 @@
             <span class="fa fa-circle fa-1x"></span>
             <span>自我介绍</span>
           </div>
-          <div class="descContent">
-            {{introduction.myIntroduce}}
-          </div>
+          <div class="descContent br">{{introduction.myIntroduce}}</div>
         </div>
         <div class="descItem">
           <div class="descTitle">
             <span class="fa fa-circle fa-1x"></span>
             <span>家庭背景</span>
           </div>
-          <div class="descContent">{{introduction.homeIntroduce}}</div>
+          <div class="descContent br">{{introduction.homeIntroduce}}</div>
         </div>
         <div class="descItem">
           <div class="descTitle">
             <span class="fa fa-circle fa-1x"></span>
             <span>理想另一半</span>
           </div>
-          <div class="descContent">{{introduction.halfIntroduce}}</div>
+          <div class="descContent br">{{introduction.halfIntroduce}}</div>
         </div>
       </div>
     </div>

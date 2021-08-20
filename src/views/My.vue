@@ -66,11 +66,11 @@
         <div class="descItem">
           <div class="descTitle">
             <span class="fa fa-circle fa-1x"></span>
-            <span>自我介绍</span>
+            <div>自我介绍</div>
           </div>
           <div class="descContent">
-            <div v-if="!editDesc">{{introduction.myIntroduce}}</div>
-            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.myIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+            <div class="br" v-if="!editDesc">{{introduction.myIntroduce}}</div>
+            <el-input v-else type="textarea" placeholder="自我介绍" v-model="introduction.myIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
         <div class="descItem">
@@ -80,7 +80,7 @@
           </div>
           <div class="descContent">
             <div v-if="!editDesc">{{introduction.homeIntroduce}}</div>
-            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.homeIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+            <el-input v-else type="textarea" placeholder="家庭背景" v-model="introduction.homeIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
         <div class="descItem">
@@ -90,7 +90,7 @@
           </div>
           <div class="descContent">
             <div v-if="!editDesc">{{introduction.halfIntroduce}}</div>
-            <el-input v-else type="textarea" placeholder="请输入内容" v-model="introduction.halfIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
+            <el-input v-else type="textarea" placeholder="理想另一半" v-model="introduction.halfIntroduce" :autosize="{ minRows: 3, maxRows: 50 }"></el-input>
           </div>
         </div>
       </div>
