@@ -20,6 +20,7 @@
               <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">购买会员</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-cog" command="/setting">消息</el-dropdown-item>
               <el-dropdown-item icon="fa fa-sign-out" command="signOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>

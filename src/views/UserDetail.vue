@@ -175,14 +175,13 @@ export default {
         content: this.reportContent,
       };
       var res = await this.$http.post("Report", data);
-      if (res) {
-        this.dialogVisible = false;
-        this.reportContent = "";
-        this.$message({
-          message: "举报成功,工作人员会在三个工作日处理完成。",
-          type: "success",
-        });
-      }
+      if (!res) return;
+      this.dialogVisible = false;
+      this.reportContent = "";
+      this.$message({
+        message: "举报成功,工作人员会在三个工作日处理完成。",
+        type: "success",
+      });
     },
     //足迹
     async look() {

@@ -75,8 +75,9 @@
                 <div class="count">{{moment.commentCount}}</div>
               </div>
               <div class="bottomItem">
-                <span class="el-icon-share"></span>
-                <div class="count">转发</div>
+                <el-tooltip effect="dark" content="投诉" placement="top">
+                  <span class="el-icon-warning-outline" @click="clickComplaint(moment.userId,moment.nickName,1,moment.id,moment.content)"></span>
+                </el-tooltip>
               </div>
             </div>
           </div>
@@ -120,7 +121,7 @@
                   </div>
                   <div class="bottomRight">
                     <el-tooltip effect="dark" content="投诉" placement="top">
-                      <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(comment.userId,comment.nickName,comment.content)"></span>
+                      <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(comment.userId,comment.nickName,2,comment.id,comment.content)"></span>
                     </el-tooltip>
                     <el-tooltip effect="dark" content="回复" placement="top">
                       <span class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment)"></span>
@@ -168,7 +169,7 @@
                     </div>
                     <div class="bottomRight">
                       <el-tooltip effect="dark" content="投诉" placement="top">
-                        <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(reply.userId,reply.nickName,reply.content)"></span>
+                        <span class="el-icon-warning-outline fontIcon" @click="clickComplaint(reply.userId,reply.nickName,3,reply.id,reply.content)"></span>
                       </el-tooltip>
                       <el-tooltip effect="dark" content="评论" placement="top">
                         <div class="el-icon-chat-dot-round fontIcon" @click="clickReply(comment,reply)"></div>
@@ -218,11 +219,11 @@
     </el-dialog>
 
     <!--投诉对话框-->
-    <el-dialog class="dialog" :title="'我要投诉的是@'+complaintDialog.userName +'发表的评论'" style="" :visible.sync="complaintDialog.visible" width="30%">
-      <span style="color:#409EFF">{{complaintDialog.userName}} :</span><span> {{complaintDialog.commentContent}}</span>
-      <el-input style="padding-top:20px" type="textarea" placeholder="投诉原因" :rows="3" maxlength="500" v-model="complaintDialog.content"></el-input>
+    <el-dialog class="dialog" :title="'我要投诉的是@'+complaintDialog.userName +'发表的'+(complaintDialog.reportObjectType==1?'动态':'评论')" style="" :visible.sync="complaintDialog.visible" width="30%">
+      <span style="color:#409EFF">{{complaintDialog.userName}} :</span><span> {{complaintDialog.content}}</span>
+      <el-input style="padding-top:20px" type="textarea" placeholder="投诉原因" :rows="3" maxlength="500" v-model="complaintDialog.reportContent"></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" style="border:none" @click="complaintDialog.visible = false">提 交</el-button>
+        <el-button type="primary" style="border:none" @click="addReport">提 交</el-button>
       </span>
     </el-dialog>
 
@@ -274,10 +275,13 @@ export default {
       //投诉对话框
       complaintDialog: {
         visible: false,
-        userId: 1,
+        userId: null, //被举报的用户
         userName: "",
-        commentContent: "",
-        content: "",
+        content: "", //评论或者回复
+        reportObjectType: 1, //举报对象  1:动态  2:评论  3:回复
+        reportObjectId: null, //评论或者回复Id
+
+        reportContent: "", //为什么举报？
       },
     };
   },
@@ -487,11 +491,47 @@ export default {
       }
     },
     //点击投诉
-    clickComplaint(userId, nickName, commentContent) {
+    clickComplaint(
+      userId,
+      nickName,
+      reportObjectType,
+      reportObjectId,
+      content
+    ) {
       this.complaintDialog.visible = true;
       this.complaintDialog.userName = nickName;
       this.complaintDialog.userId = userId;
-      this.complaintDialog.commentContent = commentContent;
+      this.complaintDialog.reportObjectType = reportObjectType;
+      this.complaintDialog.reportObjectId = reportObjectId;
+      this.complaintDialog.content = content;
+      console.log("举报信息", this.complaintDialog);
+    },
+
+    //添加投诉
+    async addReport() {
+      var data = {
+        reportUserId: this.complaintDialog.userId,
+        content: this.complaintDialog.reportContent,
+      };
+      switch (this.complaintDialog.reportObjectType) {
+        case 1:
+          data.momentId = this.complaintDialog.reportObjectId;
+          break;
+        case 2:
+          data.commentId = this.complaintDialog.reportObjectId;
+          break;
+        case 3:
+          data.replyId = this.complaintDialog.reportObjectId;
+          break;
+      }
+      var res = await this.$http.post("Report", data);
+      if (!res) return;
+      this.complaintDialog.visible = false;
+      this.complaintDialog.reportContent = "";
+      this.$message({
+        message: "举报成功,工作人员会在三个工作日处理完成。",
+        type: "success",
+      });
     },
     uploadSuccess(response, file, fileList) {
       this.moment.pictures = [];
