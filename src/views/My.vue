@@ -1,9 +1,17 @@
 <template>
   <div class="page">
     <div class="baseInfoContainer">
-      <el-image fit="cover" :src="user.headPic" alt=""></el-image>
+      <el-image class="headPic" fit="cover" :src="user.headPic" alt=""></el-image>
       <div class="rightContainer">
-        <div class="nickContainer">{{user.nickName}}</div>
+        <div class="nickContainer">
+          <el-image style="width:20px;height:22px;margin-right:6px" fit="cover" :src="require('../assets/VIP.png')"></el-image>
+          <span style="margin-right:12px">{{user.nickName}}</span>
+          <div>
+            <el-tooltip effect="dark" content="红线长度" placement="top">
+              <span class="redLine">{{user.redLine}}m</span>
+            </el-tooltip>
+          </div>
+        </div>
         <div class="centenContainer">
           <div>{{user.year}}年 - </div>
           <div>{{user.height}}cm - </div>
@@ -117,7 +125,8 @@ export default {
     async getDetail() {
       const res = await this.$http.get("User");
       this.user = res.data;
-      if (this.user.introduction)this.introduction = JSON.parse(this.user.introduction);
+      if (this.user.introduction)
+        this.introduction = JSON.parse(this.user.introduction);
       if (this.user.setting) this.setting = JSON.parse(this.user.setting);
     },
     redirect(path) {
@@ -175,6 +184,13 @@ export default {
       font-weight: 700;
       padding: 20px 0;
       color: #666666;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .redLine {
+      font-size: 12px;
+      color: #ff6666;
     }
     .centenContainer {
       display: flex;
