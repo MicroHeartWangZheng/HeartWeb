@@ -6,7 +6,7 @@
         <div class="titleContainer">
           <span @click="redirect('/users')">用户列表</span>
           <span @click="redirect('/momentlist')">动态</span>
-           <span @click="redirect('/followlist')">关注列表</span>
+          <span @click="redirect('/followlist')">关注列表</span>
           <el-dropdown @command="handleCommand">
             <span>我的</span>
             <el-dropdown-menu slot="dropdown">
@@ -20,7 +20,8 @@
               <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">购买会员</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-cog" command="/setting">消息</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-cog" command="/message">消息</el-dropdown-item>
+              <el-dropdown-item icon="fa fa-calendar-check-o" command="sign">签到</el-dropdown-item>
               <el-dropdown-item icon="fa fa-sign-out" command="signOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -40,6 +41,22 @@
       <span>© 2021 杭州月老科技 版权所有</span>
       <span>网站备案/许可证号：浙ICP备2021006379号-1</span>
     </div>
+
+    <!--签到弹出框-->
+    <el-dialog title="签到" :visible.sync="signDialog.visiable" width="440px">
+      <div class="signContainer">
+        <div class="signItem" v-for="(item,index) in rewards" :key="index">
+          <div style="font-size:15px;font-weight:700;color:#ff6666">第{{index+1}}天</div>
+          <el-image v-if="keepDays>=(index+1)" :src="require('../assets/签到.png')"></el-image>
+          <el-image v-else :src="require('../assets/未签到.png')"></el-image>
+          <div>+{{item}}红线</div>
+        </div>
+      </div>
+      <div class="signBtnContainer">
+        <el-button type="danger" style="width:50%;border-radius:20px;" @click="sign">签 到</el-button>
+      </div>
+
+    </el-dialog>
   </div>
 </template>
 
@@ -50,12 +67,26 @@ export default {
       user: {},
       newVisitorCount: 0,
       newWantCount: 0,
+      signDialog: {
+        visiable: false,
+      },
+      rewards: [],
+      keepDays: 0, //连续签到天数
     };
   },
   methods: {
     async getDetail() {
       const res = await this.$http.get("User");
       this.user = res.data;
+    },
+    async sign() {
+      const res = await this.$http.post("Sign");
+      if (!res) return;
+      this.$message({
+        message: "签到成功!",
+        type: "success",
+      });
+      this.keepDays += 1;
     },
     redirect(path) {
       this.$router.push(path);
@@ -66,34 +97,51 @@ export default {
         window.sessionStorage.removeItem("token");
         this.redirect("/login");
         return;
-      }
-      if (path === "lookList") {
+      } else if (path === "lookList") {
         this.newVisitorCount = 0;
         this.redirect("/looklist");
         return;
-      }
-      if (path === "wantList") {
+      } else if (path === "wantList") {
         this.newWantCount = 0;
         this.redirect("/wantList");
+        return;
+      } else if (path === "sign") {
+        this.signDialog.visiable = true;
+        await this.getRewards();
+        await this.getKeepDays();
         return;
       }
       this.$router.push(path);
       return;
     },
+    async getRewards() {
+      var res = await this.$http.get("Sign/Rewards");
+      if (!res) return;
+      this.rewards = res.data;
+    },
+    async getKeepDays() {
+      const res = await this.$http.get("Sign");
+      if (!res) return;
+      this.keepDays = res.data;
+      console.log("keepdays", this.keepDays);
+    },
     //销毁Token
     async destoryToken() {
       var token = window.sessionStorage.getItem("token");
       var res = await this.$http.get("Token/Destory/" + token);
+      if (!res) return;
       return res ? true : false;
     },
     //新访客数量
     async getNewVisitorCount() {
       var res = await this.$http.get("Visitor/NewVisitorCount");
+      if (!res) return;
       this.newVisitorCount = res.data;
     },
     //新申请人数量
     async getNewWantCount() {
       var res = await this.$http.get("Want/NewCount");
+      if (!res) return;
       this.newWantCount = res.data;
     },
   },
@@ -149,7 +197,7 @@ export default {
 }
 .contentContainer {
   background-color: #f2f2f2;
-   min-height:850px;
+  min-height: 850px;
 }
 .content {
   width: 1000px;
@@ -171,5 +219,25 @@ export default {
   span {
     padding: 8px 0 0 0;
   }
+}
+
+.signContainer {
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap;
+  .signItem {
+    width: 80px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
+}
+.signBtnContainer {
+  display: flex;
+  justify-content: center;
 }
 </style>

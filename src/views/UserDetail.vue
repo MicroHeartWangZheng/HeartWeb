@@ -208,11 +208,10 @@ export default {
   justify-content: space-between;
   border-radius: 10px;
   .el-image {
-    height: 360px;
+    height: 363px;
     width: 320px;
     border-radius: 10px;
   }
-
   .rightContainer {
     width: 600px;
     height: 100%;

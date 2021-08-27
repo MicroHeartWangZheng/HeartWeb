@@ -168,7 +168,7 @@ export default {
   justify-content: space-between;
   border-radius: 10px;
   .el-image {
-    height: 360px;
+    height: 365px;
     width: 320px;
     border-radius: 10px;
   }
