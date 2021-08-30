@@ -16,6 +16,7 @@ import MomentList from '../views/MomentList.vue'
 import SetpOne from '../views/SetpOne.vue'
 import UpdatePictures from '../views/UpdatePictures.vue'
 import LookList from '../views/LookList.vue'
+import Message from '../views/Message.vue'
 
 Vue.use(VueRouter)
 
@@ -117,6 +118,12 @@ const router = new VueRouter({
           component: UpdatePictures,
           meta: {
             title: '上传图片'
+          }
+        }, {
+          path: '/message',
+          component: Message,
+          meta: {
+            title: '消息列表'
           }
         }
       ]

@@ -4,7 +4,9 @@
       <el-image class="headPic" fit="cover" :src="user.headPic" alt=""></el-image>
       <div class="rightContainer">
         <div class="nickContainer">
-          <el-image style="width:20px;height:22px;margin-right:6px" fit="cover" :src="require('../assets/VIP.png')"></el-image>
+          <el-tooltip effect="dark" content="会员" placement="top">
+            <el-image style="width:20px;height:22px;margin-right:6px" fit="cover" :src="require('../assets/VIP.png')"></el-image>
+          </el-tooltip>
           <span style="margin-right:12px">{{user.nickName}}</span>
           <div>
             <el-tooltip effect="dark" content="红线长度" placement="top">
