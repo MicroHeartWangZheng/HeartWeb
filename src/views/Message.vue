@@ -9,10 +9,10 @@
         <!-- 消息：1、被举报
              2、举报后反馈
              3、动态回复，评论回复 先不做 -->
-        <el-collapse>
-          <el-collapse-item title="一致性 Consistency" name="1" v-for="(report,index) in reports" :key="index">
-            <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-            <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+        <el-collapse @change="read">
+          <el-collapse-item :title="report.userId==user.id?'举报反馈':'被举报'" :name="index" v-for="(report,index) in reports" :key="index">
+              <div v-if="report.userId==user.id">举报已经收到，已经根据 “行为处罚规则” 对相应用户做出处理，感谢你的反馈。</div>
+              <div v-else>{{report.dealContent}}</div>
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -24,7 +24,8 @@
 export default {
   data() {
     return {
-      reports:[],
+      user: {},
+      reports: [],
       queryInfo: {
         pageIndex: 1,
         pageSize: 10,
@@ -34,15 +35,42 @@ export default {
   },
   methods: {
     async getReportList() {
-      const res = await this.$http.get("Report/GetList", {
+      const res = await this.$http.get("Report", {
         params: this.queryInfo,
       });
       if (!res) return;
       this.reports = res.data.items;
       this.totalCount = res.data.total;
     },
+    async getUser() {
+      const res = await this.$http.get("User");
+      if (!res) return;
+      this.user = res.data;
+    },
+    async read(index) {
+      console.log("消息", this.reports[index]);
+      if (
+        this.reports[index].userId == this.user.id &&
+        this.reports[index].userRead
+      )
+        return true;
+      else if (
+        this.reports[index].reportUserId == this.user.id &&
+        this.reports[index].reportUserRead
+      )
+        return true;
+      else {
+        const res = await this.$http.get(
+          "Report/Read/" + this.reports[index].id
+        );
+        if (!res) return;
+      }
+    },
   },
-  mounted() {},
+  mounted() {
+    this.getReportList();
+    this.getUser();
+  },
 };
 </script>
 <style lang="less" scoped>

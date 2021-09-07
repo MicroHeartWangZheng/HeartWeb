@@ -20,7 +20,12 @@
               <el-dropdown-item icon="fa fa-pencil-square-o" command="/SetpOne">修改资料</el-dropdown-item>
               <el-dropdown-item icon="fa fa-diamond" command="/vip">购买会员</el-dropdown-item>
               <el-dropdown-item icon="fa fa-cog" command="/setting">账号设置</el-dropdown-item>
-              <el-dropdown-item icon="fa fa-cog" command="/message">消息</el-dropdown-item>
+
+              <el-dropdown-item icon="fa fa-cog" command="message">消息
+                <el-badge v-if="messageCount!=0" class="mark" :value="messageCount" />
+              </el-dropdown-item>
+
+              <!-- <el-dropdown-item icon="fa fa-cog" command="/message">消息</el-dropdown-item> -->
               <el-dropdown-item icon="fa fa-calendar-check-o" command="sign">签到</el-dropdown-item>
               <el-dropdown-item icon="fa fa-sign-out" command="signOut">退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -35,6 +40,15 @@
     <div class="contentContainer">
       <div class="content">
         <router-view></router-view>
+        <div class="customer">
+          <el-popover placement="left" width="100" height="100" trigger="hover">
+            <div class="qrcode">
+              <div style="text-align: center;">关注公众号咨询客服</div>
+              <el-image :src="require('../assets/公众号.jpg')"></el-image>
+            </div>
+            <el-image slot="reference" @mouseover="changeCustomer('in')" @mouseout="changeCustomer('out')" :src="customerPicPath" fit="contain"></el-image>
+          </el-popover>
+        </div>
       </div>
     </div>
     <div class="bottomContainer">
@@ -67,11 +81,13 @@ export default {
       user: {},
       newVisitorCount: 0,
       newWantCount: 0,
+      messageCount: 0,
       signDialog: {
         visiable: false,
       },
       rewards: [],
       keepDays: 0, //连续签到天数
+      customerPicPath: require("../assets/客服灰色.png"),
     };
   },
   methods: {
@@ -110,6 +126,10 @@ export default {
         await this.getRewards();
         await this.getKeepDays();
         return;
+      } else if (path === "message") {
+        this.messageCount = 0;
+        this.redirect("/message");
+        return;
       }
       this.$router.push(path);
       return;
@@ -144,11 +164,22 @@ export default {
       if (!res) return;
       this.newWantCount = res.data;
     },
+    //未读消息数量
+    async getMessageCount() {
+      var res = await this.$http.get("Report/UnreadCount");
+      if (!res) return;
+      this.messageCount = res.data;
+    },
+    changeCustomer(param) {
+      if (param == "in") this.customerPicPath = require("../assets/客服.png");
+      else this.customerPicPath = require("../assets/客服灰色.png");
+    },
   },
   mounted() {
     this.getDetail();
     this.getNewVisitorCount();
     this.getNewWantCount();
+    this.getMessageCount();
   },
 };
 </script>
@@ -201,9 +232,17 @@ export default {
 }
 .content {
   width: 1000px;
-
   margin: auto;
   padding-bottom: 20px;
+  .customer {
+    position: fixed;
+    bottom: 100px;
+    right: 100px;
+    .el-image {
+      height: 40px;
+      width: 40px;
+    }
+  }
 }
 
 .bottomContainer {
