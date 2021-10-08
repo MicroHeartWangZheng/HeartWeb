@@ -22,11 +22,11 @@ export default {
   data() {
     return {
       loginData: {
-        phone: "17601223700",
-        code: "123456",
+        phone: null,
+        code: null,
       },
       timer: "", //计时器
-      timerNum: 20,
+      timerNum: 60,
       timerStr: "发送验证码",
       loginFormRules: {
         phone: [
@@ -48,7 +48,7 @@ export default {
       if (this.timerNum !== 0) {
         this.timerNum--;
         console.log("timerNum", this.timerNum);
-        this.timerStr = "重新获取(" + this.timerNum + ")s";
+        this.timerStr = "重新获取" + this.timerNum + "s";
         return;
       }
       this.timerStr = "发送验证码";
@@ -63,11 +63,14 @@ export default {
         });
         return;
       }
+      //在发送倒数时,点击发送验证码 
+      if(this.timerStr!="发送验证码")
+        return;
+
       const res = await this.$http.get("Sms/Send/" + this.loginData.phone);
-      if (!res) {
-        //设置定时器
-        this.timer = setInterval(this.timerNumChange, 1000);
-      }
+      if (!res) return;
+      //设置定时器
+      this.timer = setInterval(this.timerNumChange, 1000);
     },
     async login() {
       const res = await this.$http.post("Sms/Login", this.loginData);
