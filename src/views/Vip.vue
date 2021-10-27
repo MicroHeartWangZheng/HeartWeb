@@ -7,7 +7,7 @@
       <div class="userInfo">
         <div>
           <span class="fa fa-user-o fa-3x" style="color: #ff6666"></span>
-          <span v-if="!user.vip" style="margin-left: 30px; font-size: 700">当前为：免费用户</span>
+          <span v-if="!user.vip" style="margin-left: 30px; font-size: 700">当前为：普通用户</span>
           <div class="vipInfo" v-else>
             <span style="margin:10px 0;">当前为：会员用户</span>
             <span style="font-size:12px;color:#999999">到期时间：{{user.vipEndTime}}</span>

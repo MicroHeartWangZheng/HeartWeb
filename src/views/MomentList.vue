@@ -41,7 +41,7 @@
       <div class="momentList borderRadius">
         <div class="momentItem borderRadius" v-for="(moment,momentIndex) in moments" :key="momentIndex">
           <!--用户信息-->
-          <div class="top pointer">
+          <div class="top pointer"  @click="redirect('/userDetail/'+moment.userId)">
             <el-avatar class="headPic" shape="square" :src="moment.headPic"></el-avatar>
             <div class="title">
               <div>
