@@ -163,6 +163,7 @@ export default {
     },
     //初始化地区
     async initRegion() {
+      if (!this.user.vip) return;
       const regions = await this.$http.get("Region");
       regions.data.forEach((region) => {
         const children = [];
@@ -182,11 +183,11 @@ export default {
     },
   },
   created() {
-    this.initHeightOptions();
-    this.initRegion();
-    this.initYear();
     this.getUser().then(() => {
       this.getUserList();
+      this.initHeightOptions();
+      this.initYear();
+      this.initRegion();
     });
   },
 };

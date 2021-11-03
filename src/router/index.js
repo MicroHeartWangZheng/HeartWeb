@@ -40,7 +40,7 @@ const router = new VueRouter({
           path: '/users',
           component: Users,
           meta: {
-            title: '用户列表'
+            title: '银杏果家园'
           }
         },
         {

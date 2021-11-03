@@ -19,7 +19,7 @@
             <div @click="deletePic(index)">删除</div>
           </div>
         </div>
-        <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="http://localhost:5000/api/File/Upload">
+        <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="http://www.yinxingguo.love/api/File/Upload">
           <div class="picItem pointer">
             <i class="el-icon-plus"></i>
           </div>
@@ -99,7 +99,7 @@ export default {
       this.$router.push(path);
     },
     uploadPicture(response, file, fileList) {
-      this.pictures.push("http://localhost:5000" + file.response.data);
+      this.pictures.push("http://www.yinxingguo.love" + file.response.data);
     },
     //点击 放大图片
     bigPicture(file) {

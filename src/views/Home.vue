@@ -195,7 +195,7 @@ export default {
   .headerContainer {
     display: flex;
     justify-content: space-between;
-    width: 1000px;
+    width: 920px;
     margin: auto;
   }
   .titleContainer {

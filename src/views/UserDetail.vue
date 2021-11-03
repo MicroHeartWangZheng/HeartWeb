@@ -127,7 +127,7 @@ export default {
     },
     //申请
     async want() {
-      this.$confirm("确定申请吗?", "提示", {
+      this.$confirm("申请消耗100m红线，确定申请吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

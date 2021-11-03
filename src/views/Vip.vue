@@ -45,7 +45,7 @@
             <tr>
               <td>申请功能</td>
               <td style="color: #ff6666">✘</td>
-              <td style="color: #ff6666">✘</td>
+              <td style="color: #52c41a">✔</td>
               <td style="color: #52c41a">✔</td>
             </tr>
             <tr>
