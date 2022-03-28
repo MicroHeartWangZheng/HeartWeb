@@ -28,10 +28,10 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-cascader clearable :props="{ checkStrictly: true }" :value="[queryInfo.homeProvince,queryInfo.homeCity]" :options="regions" placeholder="出生地" @change="chooseHome"> </el-cascader>
+          <el-cascader clearable :props="{ checkStrictly: true }" :value="queryInfo.homeRegion" :options="regions" placeholder="出生地" @change="chooseHome"> </el-cascader>
         </el-col>
         <el-col :span="4">
-          <el-cascader clearable :props="{ checkStrictly: true }" :value="[queryInfo.currentProvince,queryInfo.currentCity]" :options="regions" placeholder="所在地" @change="chooseCurrent"></el-cascader>
+          <el-cascader clearable :props="{ checkStrictly: true }" :value="queryInfo.currentRegion" :options="regions" placeholder="所在地" @change="chooseCurrent"></el-cascader>
         </el-col>
       </el-row>
 
@@ -93,8 +93,10 @@ export default {
         heightMax: null,
         homeProvince: null,
         homeCity: null,
+        homeRegion: [],
         currentProvince: null,
         currentCity: null,
+        currentRegion: [], //用于选中 可能会直选中一个省
         education: null,
         pageIndex: 1,
         pageSize: 16,
@@ -113,9 +115,11 @@ export default {
     },
     async getUserList() {
       var url = this.user.vip ? "User/GetListForVIP" : "User/GetList";
-      const res = await this.$http.get(url, { params: this.queryInfo });
+      const res = await this.$http.post(url, this.queryInfo);
       this.users = res.data.items;
       this.totalCount = res.data.total;
+
+      console.log("queryInfo", this.queryInfo);
     },
     //vip搜索
     vipSearch() {
@@ -141,11 +145,13 @@ export default {
     chooseHome(region) {
       this.queryInfo.homeProvince = region[0];
       this.queryInfo.homeCity = region[1];
+      this.queryInfo.homeRegion = region;
     },
     //查询当前位置
     chooseCurrent(region) {
       this.queryInfo.currentProvince = region[0];
       this.queryInfo.currentCity = region[1];
+      this.queryInfo.currentRegion = region;
     },
     //初始化年份
     initYear() {
