@@ -29,7 +29,7 @@ const router = new VueRouter({
       path: '/login',
       component: Login,
       meta: {
-        title: '登录'
+        title: '银杏果家园'
       }
     },
     {

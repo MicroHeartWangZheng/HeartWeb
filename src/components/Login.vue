@@ -14,6 +14,11 @@
         </el-form-item>
       </el-form>
     </div>
+
+    <div class="bottomContainer">
+      <span>© 2021 杭州月老科技 版权所有</span>
+      <span>网站备案/许可证号：浙ICP备2021006379号-1</span>
+    </div>
   </div>
 </template>
 
@@ -63,9 +68,8 @@ export default {
         });
         return;
       }
-      //在发送倒数时,点击发送验证码 
-      if(this.timerStr!="发送验证码")
-        return;
+      //在发送倒数时,点击发送验证码
+      if (this.timerStr != "发送验证码") return;
 
       const res = await this.$http.get("Sms/Send/" + this.loginData.phone);
       if (!res) return;
@@ -103,6 +107,21 @@ export default {
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 8px;
     padding: 30px 30px 0 30px;
+  }
+  .bottomContainer {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background-color: #2a2a2a;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    span {
+      padding: 8px 0 0 0;
+    }
   }
 }
 
