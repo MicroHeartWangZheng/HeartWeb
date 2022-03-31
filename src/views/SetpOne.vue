@@ -102,7 +102,7 @@
                 <div @click="deletePic(index)">删除</div>
               </div>
             </div>
-            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="process.env.App_UploadUrl">
+            <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" :action="uploadUrl">
               <div class="picItem pointer">
                 <i class="el-icon-plus"></i>
               </div>
@@ -131,7 +131,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">身份证照片</div>
-                <el-upload action="process.env.App_UploadUrl" :show-file-list="false" :on-success="uploadIdPicSuccess">
+                <el-upload :action="uploadUrl" :show-file-list="false" :on-success="uploadIdPicSuccess">
                   <el-tag v-if="user.idCardPicFileName">{{user.idCardPicFileName}}</el-tag>
                   <el-tag v-else-if="user.idCardPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
@@ -177,7 +177,7 @@
               <el-divider></el-divider>
               <div class="row">
                 <div class="title">证明图片<span style="color:#b5b4b4;font-size:12px;">(钉钉/微信/合同)</span></div>
-                <el-upload action="process.env.App_UploadUrl" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
+                <el-upload :action="uploadUrl" :show-file-list="false" :on-success="uploadCompanyPicSuccess">
                   <el-tag v-if="user.companyPicFileName">{{user.companyPicFileName}}</el-tag>
                   <el-tag v-else-if="user.companyPic">已上传</el-tag>
                   <el-button v-else>上传</el-button>
@@ -219,6 +219,7 @@
 export default {
   data() {
     return {
+      uploadUrl:process.env.VUE_APP_UploadUrl,
       currentStep: 0,
       title: "基本资料",
       desc: "以下资料都是必填项。你想多了解一些未来的Ta，Ta也一样 ^_^",

@@ -19,7 +19,7 @@
             <div @click="deletePic(index)">删除</div>
           </div>
         </div>
-        <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" action="process.env.App_UploadUrl">
+        <el-upload :multiple="true"  :limit="10"  :show-file-list="false"  :on-success="uploadPicture"  :auto-upload="true" :action="uploadUrl">
           <div class="picItem pointer">
             <i class="el-icon-plus"></i>
           </div>
@@ -39,6 +39,7 @@
 export default {
   data() {
     return {
+      uploadUrl:process.env.VUE_APP_UploadUrl,
       title: "基本资料",
       desc: "以下资料都是必填项。你想多了解一些未来的Ta，Ta也一样 ^_^",
       user: {},
@@ -99,7 +100,7 @@ export default {
       this.$router.push(path);
     },
     uploadPicture(response, file, fileList) {
-      this.pictures.push( file.response.data);
+      this.pictures.push(file.response.data);
     },
     //点击 放大图片
     bigPicture(file) {

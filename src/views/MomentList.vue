@@ -13,7 +13,7 @@
         </div>
         <div class="bottom">
           <div class="left">
-            <el-upload id="upload" :on-success="uploadSuccess" action="process.env.App_UploadUrl" :multiple="true" :limit="9" :show-file-list="false">
+            <el-upload id="upload" :on-success="uploadSuccess" :action="uploadUrl" :multiple="true" :limit="9" :show-file-list="false">
               <i class="fa fa-picture-o pointer"></i>
             </el-upload>
             <el-dropdown class="pointer" @command="chooseTopic">
@@ -236,6 +236,7 @@ export default {
   data() {
     return {
       user: {},
+      uploadUrl:process.env.VUE_APP_UploadUrl,
       moments: [],
       topics: [],
       choosedTopic: {},
@@ -536,9 +537,7 @@ export default {
     uploadSuccess(response, file, fileList) {
       this.moment.pictures = [];
       fileList.forEach((file) => {
-        this.moment.pictures.push(
-          "https://www.yinxingguo.love" + file.response.data
-        );
+        this.moment.pictures.push(file.response.data);
       });
     },
     removePic(index) {
